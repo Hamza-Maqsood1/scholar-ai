@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scholar AI — Intelligent Research Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#06060E;--dark:#0C0C1A;--card:#111127;
+  --b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);
+  --gold:#F0B429;--gold2:#FBBF24;--blue:#38BDF8;--purple:#A78BFA;
+  --white:#F4F4FF;--muted:#6B7090;--muted2:#9CA3AF;
+  --success:#34D399;--danger:#F87171;
+  --fd:'Cormorant Garamond',serif;--fb:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--black);color:var(--white);min-height:100vh;overflow-x:hidden;overflow-y:auto}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;z-index:0}
+.page{display:none;min-height:100vh;position:relative;z-index:1}
+.page.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-6px);opacity:1}}
+@keyframes ripple{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.4);opacity:0}}
+@keyframes voicewave{0%,100%{height:6px}50%{height:22px}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 3.5rem;display:flex;align-items:center;justify-content:space-between;background:rgba(6,6,14,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),#F97316);border-radius:7px;display:grid;place-items:center;font-size:15px;box-shadow:0 3px 14px rgba(240,180,41,.35)}
+.nav-logo-text{font-family:var(--fd);font-size:1.2rem;font-weight:700;color:var(--white)}
+.nav-logo-text span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2.2rem;list-style:none}
+.nav-links a{font-size:.84rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--white)}
+.nav-actions{display:flex;align-items:center;gap:.8rem}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:.55rem 1.3rem;border-radius:9px;font-family:var(--fb);font-size:.83rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn-ghost{background:transparent;color:var(--muted2);border:1px solid var(--b2)}
+.btn-ghost:hover{color:var(--white);border-color:rgba(255,255,255,.25)}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#F97316);color:#000;box-shadow:0 4px 18px rgba(240,180,41,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(240,180,41,.45)}
+.btn-dark{background:var(--card);color:var(--white);border:1px solid var(--b2)}
+.btn-dark:hover{border-color:var(--gold);color:var(--gold)}
+.btn-lg{padding:.85rem 1.9rem;font-size:.93rem;border-radius:11px}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:.4rem .85rem;font-size:.75rem;border-radius:7px}
+
+/* HOME */
+#home{padding-top:76px}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative}
+.hero-glow{position:absolute;width:650px;height:650px;background:radial-gradient(circle,rgba(240,180,41,.07) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 15px;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.25);border-radius:100px;font-family:var(--fm);font-size:.7rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1.8rem}
+.hero-badge::before{content:'';width:5px;height:5px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+.hero-title{font-family:var(--fd);font-size:clamp(2.8rem,7vw,6rem);font-weight:700;line-height:1.06;letter-spacing:-2px;color:var(--white);margin-bottom:1.4rem}
+.hero-title .acc{color:var(--gold)}
+.hero-sub{font-size:1.05rem;font-weight:300;color:var(--muted);line-height:1.7;max-width:540px;margin:0 auto 2.4rem}
+.hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:3.5rem}
+.hero-stats{display:flex;align-items:center;gap:2.5rem;padding:1.3rem 2.8rem;background:rgba(255,255,255,.02);border:1px solid var(--b1);border-radius:14px;flex-wrap:wrap;justify-content:center}
+.h-stat-val{font-family:var(--fd);font-size:1.9rem;font-weight:700;color:var(--white);line-height:1}
+.h-stat-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:3px}
+.h-div{width:1px;height:38px;background:var(--b2)}
+.sec{padding:5.5rem 3.5rem;max-width:1180px;margin:0 auto}
+.sec-eye{font-family:var(--fm);font-size:.7rem;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:.9rem}
+.sec-title{font-family:var(--fd);font-size:clamp(1.9rem,4vw,3rem);font-weight:700;color:var(--white);letter-spacing:-1px;line-height:1.15;margin-bottom:.9rem}
+.sec-sub{font-size:.97rem;color:var(--muted);max-width:480px;line-height:1.7}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--b1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-top:2.8rem}
+.feat-card{background:var(--dark);padding:2.2rem;transition:background .3s}
+.feat-card:hover{background:var(--card)}
+.feat-icon{width:42px;height:42px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.2);border-radius:9px;display:grid;place-items:center;font-size:19px;margin-bottom:1.1rem}
+.feat-title{font-family:var(--fd);font-size:1.15rem;font-weight:600;color:var(--white);margin-bottom:.55rem}
+.feat-desc{font-size:.85rem;color:var(--muted);line-height:1.68}
+.how-sec{padding:5.5rem 3.5rem;background:var(--dark);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.how-inner{max-width:1180px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.8rem;margin-top:2.8rem;position:relative}
+.steps::before{content:'';position:absolute;top:27px;left:15%;width:70%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.25}
+.step{text-align:center;padding:.8rem}
+.step-num{width:54px;height:54px;background:linear-gradient(135deg,var(--gold),#F97316);border-radius:13px;margin:0 auto 1.1rem;display:grid;place-items:center;font-family:var(--fd);font-size:1.4rem;font-weight:700;color:#000;box-shadow:0 5px 20px rgba(240,180,41,.3)}
+.step-title{font-family:var(--fd);font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.45rem}
+.step-desc{font-size:.8rem;color:var(--muted);line-height:1.6}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.8rem}
+.price-card{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:2.2rem;position:relative;transition:all .3s}
+.price-card:hover{border-color:var(--b2);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.price-card.feat{border-color:rgba(240,180,41,.4);background:linear-gradient(145deg,#15140D,var(--card))}
+.price-card.feat::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),#F97316);color:#000;padding:3px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.5px}
+.price-plan{font-family:var(--fm);font-size:.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:.9rem}
+.price-val{font-family:var(--fd);font-size:2.8rem;font-weight:700;color:var(--white);line-height:1;margin-bottom:.25rem}
+.price-val span{font-size:1.1rem;color:var(--muted)}
+.price-period{font-size:.78rem;color:var(--muted);margin-bottom:1.3rem}
+.price-div{height:1px;background:var(--b1);margin:1.3rem 0}
+.price-feats{list-style:none;margin-bottom:1.8rem}
+.price-feats li{font-size:.85rem;color:var(--muted2);padding:.35rem 0;display:flex;align-items:center;gap:9px}
+.price-feats li::before{content:'✓';color:var(--gold);font-weight:700;font-size:.78rem}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.8rem}
+.test-card{background:var(--card);border:1px solid var(--b1);border-radius:14px;padding:1.8rem;transition:border-color .3s}
+.test-card:hover{border-color:var(--b2)}
+.test-quote{font-family:var(--fd);font-size:1rem;color:var(--white);line-height:1.65;margin-bottom:1.3rem}
+.test-author{display:flex;align-items:center;gap:11px}
+.test-av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--fd);font-size:.95rem;font-weight:700;color:#000}
+.test-name{font-size:.85rem;font-weight:600;color:var(--white)}
+.test-role{font-size:.72rem;color:var(--muted)}
+.cta-sec{padding:5.5rem 3.5rem;text-align:center}
+.cta-inner{max-width:650px;margin:0 auto;background:linear-gradient(135deg,rgba(240,180,41,.07),rgba(249,115,22,.04));border:1px solid rgba(240,180,41,.2);border-radius:22px;padding:3.5rem 2.5rem}
+footer{padding:2.5rem 3.5rem;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.foot-logo{font-family:var(--fd);font-size:1.05rem;font-weight:700;color:var(--white)}
+.foot-logo span{color:var(--gold)}
+.foot-links{display:flex;gap:1.8rem}
+.foot-links a{font-size:.8rem;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s}
+.foot-links a:hover{color:var(--white)}
+.foot-copy{font-size:.75rem;color:var(--muted)}
+
+/* AUTH */
+.auth-page{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.auth-visual{background:linear-gradient(145deg,#0C0C1A,#080810);border-right:1px solid var(--b1);display:flex;flex-direction:column;justify-content:center;padding:5rem;position:relative;overflow:hidden}
+.auth-vis-glow{position:absolute;width:380px;height:380px;background:radial-gradient(circle,rgba(240,180,41,.11) 0%,transparent 70%);bottom:-80px;right:-80px}
+.auth-vis-title{font-family:var(--fd);font-size:clamp(1.9rem,3.2vw,2.8rem);font-weight:700;color:var(--white);line-height:1.15;letter-spacing:-1px;margin-bottom:.9rem}
+.auth-vis-title span{color:var(--gold)}
+.auth-vis-desc{font-size:.93rem;color:var(--muted);line-height:1.7;max-width:360px;margin-bottom:2.2rem}
+.auth-vis-items{list-style:none}
+.auth-vis-items li{display:flex;align-items:center;gap:11px;font-size:.87rem;color:var(--muted2);padding:.45rem 0}
+.auth-vis-items li::before{content:'→';color:var(--gold);font-weight:700}
+.auth-form-side{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem;background:var(--black)}
+.auth-form-wrap{width:100%;max-width:410px}
+.auth-form-logo{display:flex;align-items:center;gap:10px;margin-bottom:2.3rem;cursor:pointer}
+.auth-form-logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),#F97316);border-radius:7px;display:grid;place-items:center;font-size:14px}
+.auth-form-logo-text{font-family:var(--fd);font-size:1.15rem;font-weight:700;color:var(--white)}
+.auth-form-logo-text span{color:var(--gold)}
+.auth-heading{font-family:var(--fd);font-size:1.9rem;font-weight:700;color:var(--white);letter-spacing:-.5px;margin-bottom:.35rem}
+.auth-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.8rem;line-height:1.5}
+.fg{margin-bottom:1.1rem}
+.flabel{display:block;font-size:.75rem;font-weight:600;color:var(--muted2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.45rem}
+.finput{width:100%;padding:.75rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:9px;font-family:var(--fb);font-size:.87rem;color:var(--white);outline:none;transition:all .2s}
+.finput:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.1)}
+.finput::placeholder{color:#35394F}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.form-div{display:flex;align-items:center;gap:1rem;margin:1.3rem 0}
+.form-div::before,.form-div::after{content:'';flex:1;height:1px;background:var(--b1)}
+.form-div span{font-size:.72rem;color:var(--muted)}
+.form-foot{text-align:center;margin-top:1.3rem;font-size:.82rem;color:var(--muted)}
+.form-foot a{color:var(--gold);text-decoration:none;font-weight:600;cursor:pointer}
+.form-foot a:hover{text-decoration:underline}
+.rem-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem}
+.rem-lbl{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--muted2);cursor:pointer}
+.rem-lbl input{accent-color:var(--gold)}
+.forgot{font-size:.8rem;color:var(--gold);text-decoration:none;cursor:pointer}
+.alert{padding:.8rem 1.1rem;border-radius:9px;font-size:.82rem;margin-bottom:.9rem;display:flex;align-items:center;gap:9px}
+.alert-w{background:rgba(248,180,0,.07);border:1px solid rgba(248,180,0,.2);color:#FCD34D}
+.alert-e{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:var(--danger)}
+.alert-s{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);color:var(--success)}
+
+/* DASHBOARD */
+#dashboard{display:none}
+#dashboard.active{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.dsb{background:var(--dark);border-right:1px solid var(--b1);padding:1.3rem;position:fixed;top:0;left:0;bottom:0;width:260px;overflow-y:auto;z-index:50}
+.dsb-logo{display:flex;align-items:center;gap:9px;padding:.4rem;margin-bottom:1.8rem;cursor:pointer}
+.dsb-logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--gold),#F97316);border-radius:6px;display:grid;place-items:center;font-size:13px}
+.dsb-logo-text{font-family:var(--fd);font-size:1.05rem;font-weight:700;color:var(--white)}
+.dsb-logo-text span{color:var(--gold)}
+.dsb-lbl{font-family:var(--fm);font-size:.6rem;color:#3A3F60;letter-spacing:2px;text-transform:uppercase;padding:0 .6rem;margin-bottom:.4rem;margin-top:1.3rem}
+.dsb-item{display:flex;align-items:center;gap:9px;padding:.65rem .7rem;border-radius:7px;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:2px}
+.dsb-item:hover{background:rgba(255,255,255,.04);color:var(--white)}
+.dsb-item.act{background:rgba(240,180,41,.1);color:var(--gold)}
+.dsb-item-icon{font-size:14px;width:18px;text-align:center}
+.dsb-badge{margin-left:auto;font-family:var(--fm);font-size:.55rem;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:1px 6px;border-radius:10px;letter-spacing:.5px}
+.dsb-user{position:absolute;bottom:1.3rem;left:1.3rem;right:1.3rem;display:flex;align-items:center;gap:9px;padding:.7rem;background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:9px}
+.dsb-user-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F97316);display:grid;place-items:center;font-family:var(--fd);font-size:.95rem;font-weight:700;color:#000;flex-shrink:0}
+.dsb-user-name{font-size:.82rem;font-weight:600;color:var(--white)}
+.dsb-user-plan{font-size:.68rem;color:var(--muted)}
+.dsb-main{margin-left:260px;min-height:100vh}
+.dsb-topbar{padding:1.1rem 2.2rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;background:rgba(6,6,14,.75);backdrop-filter:blur(10px);position:sticky;top:0;z-index:40}
+.dsb-page-title{font-family:var(--fd);font-size:1.25rem;font-weight:700;color:var(--white)}
+.dsb-content{padding:1.8rem 2.2rem}
+
+/* Search form */
+.sform{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:1.8rem;margin-bottom:1.8rem}
+.slabel{font-size:.73rem;font-weight:600;color:var(--muted2);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:.45rem}
+.sinput,.sselect{width:100%;padding:.7rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:9px;font-family:var(--fb);font-size:.86rem;color:var(--white);outline:none;transition:all .2s}
+.sinput:focus,.sselect:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.1)}
+.sinput::placeholder{color:#35394F}
+.sselect option{background:var(--dark)}
+.starea{width:100%;min-height:78px;padding:.7rem .95rem;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:9px;font-family:var(--fb);font-size:.86rem;color:var(--white);outline:none;transition:all .2s;resize:vertical;line-height:1.6}
+.starea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.1)}
+.starea::placeholder{color:#35394F}
+.sgrid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+.sgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+.radio-grp{display:flex;gap:.6rem}
+.radio-opt{flex:1;padding:.55rem;background:rgba(255,255,255,.03);border:1px solid var(--b2);border-radius:7px;text-align:center;font-size:.8rem;color:var(--muted2);cursor:pointer;transition:all .2s}
+.radio-opt.sel{background:rgba(240,180,41,.1);border-color:rgba(240,180,41,.35);color:var(--gold);font-weight:600}
+.topic-input-wrap{position:relative}
+.mic-inline{position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:8px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.25);color:var(--gold);cursor:pointer;display:grid;place-items:center;font-size:14px;transition:all .2s}
+.mic-inline:hover{background:rgba(240,180,41,.2)}
+.mic-inline.listening{background:var(--danger);border-color:var(--danger);color:#fff;animation:pulse 1s infinite}
+
+/* Stats row */
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.4rem}
+.scard{background:var(--card);border:1px solid var(--b1);border-radius:11px;padding:1.1rem 1.4rem}
+.scard-val{font-family:var(--fd);font-size:1.9rem;font-weight:700;color:var(--white);line-height:1}
+.scard-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+
+/* Combined summary card */
+.combined-card{background:linear-gradient(145deg,rgba(240,180,41,.07),rgba(167,139,250,.04));border:1px solid rgba(240,180,41,.22);border-radius:14px;padding:1.5rem 1.7rem;margin-bottom:1.2rem;position:relative}
+.combined-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.8rem;flex-wrap:wrap}
+.combined-title{font-family:var(--fd);font-size:1.25rem;font-weight:700;color:var(--white);display:flex;align-items:center;gap:9px}
+.combined-tag{font-family:var(--fm);font-size:.62rem;color:var(--gold);background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.25);border-radius:20px;padding:3px 11px;letter-spacing:1px;text-transform:uppercase}
+.combined-body{font-size:.9rem;color:var(--muted2);line-height:1.75}
+.combined-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+
+/* Paper card */
+.pcard{background:var(--card);border:1px solid var(--b1);border-radius:12px;padding:1.3rem 1.6rem;margin-bottom:.9rem;transition:all .25s;position:relative;overflow:hidden}
+.pcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(var(--gold),#F97316);opacity:0;transition:opacity .25s}
+.pcard:hover{border-color:var(--b2);transform:translateX(3px);box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.pcard:hover::before{opacity:1}
+.pcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.pcard-idx{font-family:var(--fm);font-size:.65rem;color:#3A3F60;letter-spacing:1px;margin-bottom:.35rem}
+.pcard-title{font-size:.94rem;font-weight:600;color:var(--white);line-height:1.42;margin-bottom:.5rem}
+.pcard-authors{font-size:.76rem;color:var(--muted);margin-bottom:.6rem;font-style:italic}
+.pcard-meta{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem}
+.ptag{font-family:var(--fm);font-size:.67rem;padding:2px 9px;border-radius:5px}
+.ptag-yr{background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.2);color:var(--gold2)}
+.ptag-tp{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:var(--blue)}
+.ptag-vn{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);color:var(--purple);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard-link{font-size:.75rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:3px;transition:color .2s}
+.pcard-link:hover{color:var(--gold)}
+.pcard-sec{margin-top:.7rem}
+.pcard-olbl{font-size:.68rem;font-weight:700;color:#3A3F60;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.35rem;display:flex;align-items:center;gap:6px}
+.pcard-otxt{font-size:.84rem;color:#8A90A9;line-height:1.7}
+.pcard-tools{display:flex;gap:.4rem;flex-shrink:0;position:relative}
+.ptool{width:30px;height:30px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--b2);color:var(--muted2);cursor:pointer;display:grid;place-items:center;font-size:13px;transition:all .2s}
+.ptool:hover{border-color:var(--gold);color:var(--gold)}
+.ptool.saved{background:rgba(240,180,41,.15);border-color:var(--gold);color:var(--gold)}
+.cite-menu{position:absolute;top:36px;right:0;background:var(--dark);border:1px solid var(--b2);border-radius:10px;padding:.5rem;z-index:30;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none}
+.cite-menu.open{display:block;animation:fadeIn .2s ease}
+.cite-tabs{display:flex;gap:.3rem;margin-bottom:.5rem}
+.cite-tab{flex:1;padding:.35rem;font-family:var(--fm);font-size:.65rem;text-align:center;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--b1);color:var(--muted2);cursor:pointer}
+.cite-tab.act{background:rgba(240,180,41,.12);border-color:rgba(240,180,41,.3);color:var(--gold)}
+.cite-text{font-size:.74rem;color:var(--muted2);line-height:1.55;background:rgba(0,0,0,.3);border-radius:7px;padding:.6rem;max-height:120px;overflow-y:auto;font-family:var(--fm);word-break:break-word}
+.cite-copy{margin-top:.5rem;width:100%;justify-content:center}
+
+/* Loading / empty */
+.load-state{text-align:center;padding:3.5rem 2rem}
+.load-spin{width:38px;height:38px;border:2px solid var(--b1);border-top-color:var(--gold);border-radius:50%;margin:0 auto .9rem;animation:spin .8s linear infinite}
+.load-txt{font-size:.85rem;color:var(--muted)}
+.load-sub{font-size:.72rem;color:#3A3F60;margin-top:.4rem;font-family:var(--fm)}
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:.9rem;opacity:.4}
+.empty-title{font-family:var(--fd);font-size:1.3rem;color:#3A3F60;margin-bottom:.4rem}
+.empty-desc{font-size:.82rem;color:#2E3350}
+
+/* Export box */
+.export-box{background:var(--card);border:1px solid var(--b1);border-radius:13px;padding:1.5rem;margin-top:1.4rem}
+.export-title{font-family:var(--fd);font-size:1.05rem;color:var(--white);margin-bottom:.35rem}
+.export-sub{font-size:.8rem;color:var(--muted);margin-bottom:1.1rem}
+.export-row{display:flex;gap:.7rem;flex-wrap:wrap}
+
+/* AI / Plagiarism check */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1.2rem}
+.check-mode{padding:1.1rem 1.3rem;background:var(--card);border:1px solid var(--b2);border-radius:12px;cursor:pointer;transition:all .2s}
+.check-mode.sel{border-color:var(--gold);background:linear-gradient(145deg,rgba(240,180,41,.08),var(--card))}
+.check-mode-icon{font-size:22px;margin-bottom:.5rem}
+.check-mode-title{font-family:var(--fd);font-size:1.1rem;font-weight:600;color:var(--white);margin-bottom:.25rem}
+.check-mode-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+.gauge-wrap{display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;justify-content:center;padding:1.5rem 0}
+.gauge{position:relative;width:150px;height:150px}
+.gauge svg{transform:rotate(-90deg)}
+.gauge-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-num{font-family:var(--fd);font-size:2.4rem;font-weight:700;line-height:1}
+.gauge-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.verdict-box{padding:1.1rem 1.3rem;border-radius:11px;margin-bottom:1rem;font-size:.9rem;line-height:1.6}
+.verdict-ai{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:#FCA5A5}
+.verdict-human{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);color:#6EE7B7}
+.pattern-list{list-style:none;margin-top:.6rem}
+.pattern-list li{font-size:.82rem;color:var(--muted2);padding:.4rem 0;display:flex;gap:9px;align-items:flex-start}
+.pattern-list li::before{content:'▸';color:var(--gold);flex-shrink:0}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:.6rem;align-items:center}
+.toast{padding:.8rem 1.4rem;background:var(--dark);border:1px solid var(--b2);border-radius:11px;font-size:.84rem;color:var(--white);box-shadow:0 12px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:9px;animation:slideUp .3s ease}
+.toast.ok{border-color:rgba(52,211,153,.4)}
+.toast.err{border-color:rgba(248,113,113,.4)}
+
+/* Voice Assistant Orb */
+.voice-orb{position:fixed;bottom:2rem;right:2rem;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F97316);border:none;cursor:pointer;display:grid;place-items:center;font-size:24px;color:#000;box-shadow:0 8px 30px rgba(240,180,41,.5);z-index:200;transition:transform .2s}
+.voice-orb:hover{transform:scale(1.08)}
+.voice-orb.listening{animation:pulse 1.2s infinite}
+.voice-orb.listening::before{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);animation:ripple 1.4s infinite}
+.voice-panel{position:fixed;bottom:6.5rem;right:2rem;width:340px;background:var(--dark);border:1px solid var(--b2);border-radius:18px;padding:1.4rem;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none}
+.voice-panel.open{display:block;animation:slideUp .3s ease}
+.voice-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.voice-panel-title{font-family:var(--fd);font-size:1.15rem;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px}
+.voice-status{font-size:.8rem;color:var(--muted);text-align:center;padding:.5rem 0;min-height:24px}
+.voice-status b{color:var(--gold)}
+.voice-viz{display:flex;align-items:center;justify-content:center;gap:4px;height:36px;margin:.8rem 0}
+.voice-bar{width:4px;background:var(--gold);border-radius:4px;height:6px}
+.voice-panel.active-listen .voice-bar{animation:voicewave .8s ease infinite}
+.voice-panel.active-listen .voice-bar:nth-child(2){animation-delay:.1s}
+.voice-panel.active-listen .voice-bar:nth-child(3){animation-delay:.2s}
+.voice-panel.active-listen .voice-bar:nth-child(4){animation-delay:.3s}
+.voice-panel.active-listen .voice-bar:nth-child(5){animation-delay:.15s}
+.voice-panel.active-listen .voice-bar:nth-child(6){animation-delay:.25s}
+.voice-transcript{background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:10px;padding:.8rem;font-size:.82rem;color:var(--muted2);min-height:50px;line-height:1.5;margin-bottom:.9rem}
+.voice-cmds{font-size:.72rem;color:var(--muted)}
+.voice-cmds-title{font-family:var(--fm);font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:#3A3F60;margin-bottom:.5rem}
+.voice-cmd{padding:.35rem .6rem;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:4px}
+.voice-cmd b{color:var(--gold2)}
+.voice-controls{display:flex;gap:.5rem;margin-top:.9rem}
+
+/* CHAT */
+#chat-page{display:none;overflow:hidden}
+#chat-page.active{display:flex;flex-direction:column;height:100vh}
+.chat-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.6rem;background:rgba(6,6,14,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);flex-shrink:0;z-index:10}
+.chat-badge{font-family:var(--fm);font-size:.63rem;color:var(--gold);background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.22);border-radius:20px;padding:3px 11px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.chat-badge::before{content:'';width:5px;height:5px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+.chat-layout{display:flex;flex:1;overflow:hidden}
+.chat-sidebar{width:255px;flex-shrink:0;background:var(--dark);border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden}
+.chat-sidebar-top{padding:1.1rem;border-bottom:1px solid var(--b1)}
+.cs-label{font-family:var(--fm);font-size:.6rem;color:#3A3F60;letter-spacing:2px;text-transform:uppercase;margin-bottom:.6rem;padding:0 .25rem}
+.qbtn{display:flex;align-items:flex-start;gap:9px;padding:.65rem .8rem;border-radius:8px;background:transparent;border:1px solid transparent;cursor:pointer;width:100%;text-align:left;transition:all .2s;margin-bottom:3px}
+.qbtn:hover{background:rgba(255,255,255,.04);border-color:var(--b1)}
+.qbtn-icon{font-size:14px;margin-top:1px;flex-shrink:0}
+.qbtn-title{font-size:.79rem;font-weight:500;color:var(--white);margin-bottom:1px;line-height:1.3}
+.qbtn-sub{font-size:.69rem;color:var(--muted);line-height:1.4}
+.chat-sidebar-mid{flex:1;overflow-y:auto;padding:1.1rem}
+.chat-sidebar-bot{padding:.9rem 1.1rem;border-top:1px solid var(--b1)}
+.mentor-card{background:rgba(240,180,41,.06);border:1px solid rgba(240,180,41,.15);border-radius:9px;padding:.9rem}
+.mentor-card-title{font-family:var(--fd);font-size:.88rem;font-weight:600;color:var(--gold2);margin-bottom:.28rem}
+.mentor-card-desc{font-size:.7rem;color:var(--muted);line-height:1.6}
+.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:1.3rem 1.6rem;display:flex;flex-direction:column;gap:1.1rem}
+.msgs::-webkit-scrollbar{width:3px}
+.msgs::-webkit-scrollbar-thumb{background:rgba(240,180,41,.2);border-radius:10px}
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:3rem 2rem;gap:.9rem}
+.welcome-icon{width:60px;height:60px;background:linear-gradient(135deg,rgba(240,180,41,.15),rgba(249,115,22,.1));border:1px solid rgba(240,180,41,.25);border-radius:14px;display:grid;place-items:center;font-size:26px;margin-bottom:.4rem}
+.welcome-title{font-family:var(--fd);font-size:1.7rem;font-weight:700;color:var(--white);letter-spacing:-.5px}
+.welcome-title span{color:var(--gold)}
+.welcome-sub{font-size:.87rem;color:var(--muted);max-width:400px;line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-top:.4rem}
+.chip{padding:.45rem .9rem;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:100px;font-size:.75rem;color:var(--muted2);cursor:pointer;transition:all .2s}
+.chip:hover{background:rgba(240,180,41,.08);border-color:rgba(240,180,41,.3);color:var(--gold2)}
+.msg{display:flex;gap:9px;max-width:780px}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg.assistant{align-self:flex-start}
+.msg-av{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.msg-av.ai{background:linear-gradient(135deg,var(--gold),#F97316);font-size:13px}
+.msg-av.user{background:rgba(56,189,248,.2);border:1px solid rgba(56,189,248,.3);color:var(--blue);font-weight:700;font-size:11px}
+.msg-body{flex:1}
+.msg-name{font-family:var(--fm);font-size:.62rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem;display:flex;align-items:center;gap:8px}
+.msg.user .msg-name{justify-content:flex-end}
+.msg-speak{cursor:pointer;color:#3A3F60;transition:color .2s}
+.msg-speak:hover{color:var(--gold)}
+.msg-bubble{padding:.85rem 1.05rem;border-radius:11px;font-size:.86rem;line-height:1.72}
+.msg.assistant .msg-bubble{background:var(--card);border:1px solid var(--b1);color:var(--muted2);border-top-left-radius:3px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,rgba(240,180,41,.12),rgba(249,115,22,.08));border:1px solid rgba(240,180,41,.2);color:var(--white);border-top-right-radius:3px}
+.msg-bubble p{margin-bottom:.55rem}
+.msg-bubble p:last-child{margin-bottom:0}
+.msg-bubble strong{color:var(--white);font-weight:600}
+.msg-bubble em{color:var(--gold2);font-style:normal}
+.msg-bubble code{font-family:var(--fm);font-size:.78rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;color:var(--gold)}
+.msg-bubble h3{font-family:var(--fd);font-size:.97rem;font-weight:600;color:var(--white);margin:.75rem 0 .35rem}
+.msg-bubble ul{padding-left:1.1rem;margin:.35rem 0 .55rem}
+.msg-bubble ul li{margin-bottom:.28rem;color:var(--muted2)}
+.chat-divider{display:flex;align-items:center;gap:9px;margin:.4rem 0}
+.chat-divider::before,.chat-divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+.chat-divider span{font-family:var(--fm);font-size:.6rem;color:#2E3350;letter-spacing:1.5px;text-transform:uppercase}
+.paper-result{background:rgba(255,255,255,.03);border:1px solid var(--b2);border-radius:9px;padding:.95rem 1.05rem;border-left:2px solid var(--gold);margin-bottom:.7rem;transition:all .2s}
+.paper-result:hover{background:rgba(240,180,41,.04);border-color:rgba(240,180,41,.3)}
+.pr-num{font-family:var(--fm);font-size:.6rem;color:#3A3F60;letter-spacing:1px;margin-bottom:.35rem}
+.pr-title{font-size:.85rem;font-weight:600;color:var(--white);line-height:1.38;margin-bottom:.45rem}
+.pr-meta{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;margin-bottom:.6rem}
+.pr-tag{font-family:var(--fm);font-size:.63rem;padding:2px 8px;border-radius:4px}
+.pr-yr{background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.2);color:var(--gold2)}
+.pr-link{background:transparent;border:none;cursor:pointer;font-family:var(--fb);font-size:.72rem;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:3px;transition:color .2s}
+.pr-link:hover{color:#93C5FD}
+.pr-body{font-size:.8rem;color:#7A8099;line-height:1.65}
+.typing-ind{display:flex;align-items:center;gap:4px;padding:.85rem 1.05rem}
+.tdot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce 1.2s ease infinite}
+.tdot:nth-child(2){animation-delay:.2s}
+.tdot:nth-child(3){animation-delay:.4s}
+.status-bar{display:flex;align-items:center;gap:7px;padding:.45rem 1rem;background:rgba(240,180,41,.05);border:1px solid rgba(240,180,41,.12);border-radius:7px;margin-bottom:.7rem;font-size:.75rem;color:var(--gold2)}
+.sspinner{width:11px;height:11px;border:1.5px solid rgba(240,180,41,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+.input-area{padding:.9rem 1.6rem 1.2rem;border-top:1px solid var(--b1);background:rgba(6,6,14,.85);backdrop-filter:blur(10px);flex-shrink:0}
+.input-wrap{display:flex;align-items:flex-end;gap:.65rem;background:rgba(255,255,255,.04);border:1px solid var(--b2);border-radius:13px;padding:.65rem .75rem;transition:border-color .2s}
+.input-wrap:focus-within{border-color:rgba(240,180,41,.4);box-shadow:0 0 0 3px rgba(240,180,41,.08)}
+.ibox{flex:1;background:transparent;border:none;outline:none;font-family:var(--fb);font-size:.88rem;color:var(--white);resize:none;max-height:110px;line-height:1.5}
+.ibox::placeholder{color:#35394F}
+.chat-mic{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.25);cursor:pointer;display:grid;place-items:center;font-size:14px;color:var(--gold);transition:all .2s}
+.chat-mic:hover{background:rgba(240,180,41,.2)}
+.chat-mic.listening{background:var(--danger);border-color:var(--danger);color:#fff;animation:pulse 1s infinite}
+.send-btn{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#F97316);border:none;cursor:pointer;display:grid;place-items:center;font-size:14px;box-shadow:0 3px 11px rgba(240,180,41,.3);transition:all .2s;color:#000}
+.send-btn:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(240,180,41,.45)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.input-hints{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding:0 .15rem}
+.hint-txt{font-size:.67rem;color:#2E3350}
+.hint-keys{display:flex;gap:.45rem}
+.hkey{font-family:var(--fm);font-size:.6rem;color:#2E3350;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:3px;padding:1px 5px}
+.fade-in{animation:fadeIn .3s ease}
+@media(max-width:820px){
+  nav{padding:1rem 1.3rem}.nav-links{display:none}.sec{padding:3.5rem 1.3rem}
+  .feat-grid,.price-grid,.test-grid,.steps,.srow,.check-grid{grid-template-columns:1fr}
+  .auth-page{grid-template-columns:1fr}.auth-visual{display:none}
+  #dashboard.active{grid-template-columns:1fr}.dsb{transform:translateX(-100%);transition:transform .3s}
+  .dsb.open{transform:translateX(0)}.dsb-main{margin-left:0}
+  .chat-sidebar{display:none}.sgrid3,.sgrid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="main-nav">
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-mark">⬡</div>
+    <div class="nav-logo-text">Scholar<span>AI</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="scrollToSection('feat')">Features</a></li>
+    <li><a onclick="showPage('pricing')">Pricing</a></li>
+    <li><a onclick="scrollToSection('how')">How It Works</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="showPage('signin')">Sign In</button>
+    <button class="btn btn-primary" onclick="showPage('signup')">Get Started →</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="home">
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">✦ Powered by LLaMA 3.3 · Semantic Scholar · Voice AI</div>
+    <h1 class="hero-title">Research Smarter.<br><span class="acc">Not Harder.</span></h1>
+    <p class="hero-sub">Scholar AI searches millions of academic papers, synthesizes AI summaries, detects AI-generated text & plagiarism, and exports professional reports — all guided by voice.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" onclick="showPage('signup')">Start for Free →</button>
+      <button class="btn btn-dark btn-lg" onclick="showPage('signin')">Sign In</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="h-stat-val">200M+</div><div class="h-stat-lbl">Papers Indexed</div></div>
+      <div class="h-div"></div>
+      <div><div class="h-stat-val">&lt;3s</div><div class="h-stat-lbl">Search Time</div></div>
+      <div class="h-div"></div>
+      <div><div class="h-stat-val">AI</div><div class="h-stat-lbl">Detection</div></div>
+      <div class="h-div"></div>
+      <div><div class="h-stat-val">🎙️</div><div class="h-stat-lbl">Voice Control</div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="feat">
+    <div class="sec-eye">What We Offer</div>
+    <h2 class="sec-title">Everything a researcher<br>could need.</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">🔍</div><div class="feat-title">Multi-Topic Search</div><div class="feat-desc">Search 200M+ papers across many topics at once. Filter by year range and paper count.</div></div>
+      <div class="feat-card"><div class="feat-icon">🧬</div><div class="feat-title">Combined + Individual Summaries</div><div class="feat-desc">A synthesized overview per topic, plus each paper's own abstract & AI summary with source links.</div></div>
+      <div class="feat-card"><div class="feat-icon">📄</div><div class="feat-title">Professional PDF Export</div><div class="feat-desc">Download a formatted report with overviews, papers, authors, and clickable links.</div></div>
+      <div class="feat-card"><div class="feat-icon">🛡️</div><div class="feat-title">AI & Plagiarism Check</div><div class="feat-desc">Detect AI-generated text with confidence scores and scan passages against published work.</div></div>
+      <div class="feat-card"><div class="feat-icon">🎙️</div><div class="feat-title">Advanced Voice Assistant</div><div class="feat-desc">Speak your searches, dictate to the chatbot, and have summaries read back aloud, hands-free.</div></div>
+      <div class="feat-card"><div class="feat-icon">🤖</div><div class="feat-title">Research Mentor AI</div><div class="feat-desc">A chatbot research specialist for methodology, writing, citations, and live paper search.</div></div>
+      <div class="feat-card"><div class="feat-icon">📑</div><div class="feat-title">Instant Citations</div><div class="feat-desc">One-click APA, MLA, IEEE & BibTeX citations for every paper, copied to your clipboard.</div></div>
+      <div class="feat-card"><div class="feat-icon">⭐</div><div class="feat-title">Library & History</div><div class="feat-desc">Save papers to your library and revisit every past search — stored on your device.</div></div>
+      <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-title">Lightning Fast</div><div class="feat-desc">Results and summaries in seconds per topic, with graceful offline fallback.</div></div>
+    </div>
+  </section>
+
+  <section class="how-sec" id="how">
+    <div class="how-inner">
+      <div class="sec-eye">How It Works</div>
+      <h2 class="sec-title">Research in 4 steps.</h2>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-title">Enter Topics</div><div class="step-desc">Type or speak your research topics — one or many.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-title">Set Filters</div><div class="step-desc">Choose year range, count, and output format.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-title">AI Analysis</div><div class="step-desc">LLaMA reads, summarizes & synthesizes each topic.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-title">Export & Verify</div><div class="step-desc">Download a PDF, cite, or run an AI/plagiarism check.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-eye">Testimonials</div>
+    <h2 class="sec-title">Researchers love it.</h2>
+    <div class="test-grid">
+      <div class="test-card"><div class="test-quote">"Scholar AI saved me 6 hours on my literature review. The combined summaries are surprisingly sharp."</div><div class="test-author"><div class="test-av" style="background:linear-gradient(135deg,#F59E0B,#EF4444)">S</div><div><div class="test-name">Sarah K.</div><div class="test-role">PhD Candidate, MIT</div></div></div></div>
+      <div class="test-card"><div class="test-quote">"The voice assistant lets me search papers while taking notes. The PDF export is a game changer."</div><div class="test-author"><div class="test-av" style="background:linear-gradient(135deg,#38BDF8,#818CF8)">A</div><div><div class="test-name">Ahmed R.</div><div class="test-role">ML Engineer, Google</div></div></div></div>
+      <div class="test-card"><div class="test-quote">"The AI detector and citation tools make this the only research app my whole lab uses now."</div><div class="test-author"><div class="test-av" style="background:linear-gradient(135deg,#34D399,#38BDF8)">L</div><div><div class="test-name">Layla M.</div><div class="test-role">Research Scientist, Oxford</div></div></div></div>
+    </div>
+  </section>
+
+  <section class="cta-sec">
+    <div class="cta-inner">
+      <div class="sec-eye" style="margin-bottom:.9rem">Start Today</div>
+      <h2 class="sec-title" style="margin-bottom:.9rem">Ready to research<br><span style="color:var(--gold)">at the speed of AI?</span></h2>
+      <p class="sec-sub" style="margin:0 auto 2rem">Join thousands of researchers who use Scholar AI every day.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="showPage('signup')">Create Free Account →</button>
+        <button class="btn btn-ghost btn-lg" onclick="showPage('pricing')">View Pricing</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-logo">Scholar<span>AI</span></div>
+    <div class="foot-links">
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('pricing')">Pricing</a>
+      <a onclick="showPage('signup')">Sign Up</a>
+      <a onclick="showPage('signin')">Sign In</a>
+    </div>
+    <div class="foot-copy">© 2026 ScholarAI. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- SIGN UP -->
+<div class="page" id="signup">
+  <div class="auth-page">
+    <div class="auth-visual">
+      <div class="auth-vis-glow"></div>
+      <div style="margin-bottom:2.2rem">
+        <div class="nav-logo-mark" style="width:38px;height:38px;font-size:18px;margin-bottom:1.3rem">⬡</div>
+        <div class="auth-vis-title">Join thousands of<br><span>researchers.</span></div>
+        <p class="auth-vis-desc">Scholar AI helps you find, understand, verify, and export academic papers — in seconds, not hours.</p>
+      </div>
+      <ul class="auth-vis-items">
+        <li>Search 200M+ academic papers</li>
+        <li>Combined + individual AI summaries</li>
+        <li>AI & plagiarism detection</li>
+        <li>Voice-controlled research</li>
+        <li>Professional PDF exports & citations</li>
+      </ul>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-form-wrap">
+        <div class="auth-form-logo" onclick="showPage('home')">
+          <div class="auth-form-logo-mark">⬡</div>
+          <div class="auth-form-logo-text">Scholar<span>AI</span></div>
+        </div>
+        <h2 class="auth-heading">Create account</h2>
+        <p class="auth-sub">Start your free research journey. No credit card required.</p>
+        <div class="frow">
+          <div class="fg"><label class="flabel">First Name</label><input class="finput" type="text" placeholder="Hamza" id="su-first"></div>
+          <div class="fg"><label class="flabel">Last Name</label><input class="finput" type="text" placeholder="Maqsood" id="su-last"></div>
+        </div>
+        <div class="fg"><label class="flabel">Email Address</label><input class="finput" type="email" placeholder="hamza@university.edu" id="su-email"></div>
+        <div class="fg"><label class="flabel">Password</label><input class="finput" type="password" placeholder="Min. 8 characters" id="su-pass"></div>
+        <div class="fg"><label class="flabel">I am a...</label><select class="finput"><option value="" disabled selected>Select your role</option><option>PhD Student</option><option>Masters Student</option><option>Undergraduate Student</option><option>Research Scientist</option><option>Professor / Faculty</option><option>Industry Professional</option></select></div>
+        <div id="su-alert"></div>
+        <button class="btn btn-primary btn-lg btn-full" onclick="handleSignup()">Create Account →</button>
+        <p class="form-foot" style="margin-top:1.1rem">Already have an account? <a onclick="showPage('signin')">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN IN -->
+<div class="page" id="signin">
+  <div class="auth-page">
+    <div class="auth-visual">
+      <div class="auth-vis-glow"></div>
+      <div>
+        <div class="nav-logo-mark" style="width:38px;height:38px;font-size:18px;margin-bottom:1.3rem">⬡</div>
+        <div class="auth-vis-title">Welcome<br><span>back.</span></div>
+        <p class="auth-vis-desc">Your research dashboard is waiting. Pick up right where you left off.</p>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-form-wrap">
+        <div class="auth-form-logo" onclick="showPage('home')">
+          <div class="auth-form-logo-mark">⬡</div>
+          <div class="auth-form-logo-text">Scholar<span>AI</span></div>
+        </div>
+        <h2 class="auth-heading">Sign in</h2>
+        <p class="auth-sub">Enter your credentials to access your research dashboard.</p>
+        <div class="fg"><label class="flabel">Email Address</label><input class="finput" type="email" placeholder="hamza@university.edu" id="si-email"></div>
+        <div class="fg"><label class="flabel">Password</label><input class="finput" type="password" placeholder="Your password" id="si-pass"></div>
+        <div class="rem-row"><label class="rem-lbl"><input type="checkbox"> Remember me</label><a class="forgot">Forgot password?</a></div>
+        <div id="si-alert"></div>
+        <button class="btn btn-primary btn-lg btn-full" onclick="handleSignin()">Sign In →</button>
+        <div class="form-div"><span>or</span></div>
+        <button class="btn btn-dark btn-lg btn-full" style="margin-bottom:.7rem" onclick="showPage('dashboard')">🎓 Continue as Demo User</button>
+        <p class="form-foot">Don't have an account? <a onclick="showPage('signup')">Create one free</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="page" id="pricing">
+  <div style="padding-top:76px">
+    <section class="sec" style="text-align:center">
+      <div class="sec-eye">Pricing</div>
+      <h2 class="sec-title">Simple, honest pricing.</h2>
+      <p class="sec-sub" style="margin:0 auto 2.8rem">Start free, upgrade when you need more.</p>
+      <div class="price-grid">
+        <div class="price-card">
+          <div class="price-plan">Starter</div>
+          <div class="price-val">$0 <span>/ mo</span></div>
+          <div class="price-period">Forever free</div>
+          <div class="price-div"></div>
+          <ul class="price-feats"><li>5 searches per day</li><li>Up to 5 papers per search</li><li>AI summaries (short)</li><li>PDF export & citations</li><li>Voice assistant</li><li>Research Mentor chat</li></ul>
+          <button class="btn btn-dark btn-full" onclick="showPage('signup')">Get Started Free</button>
+        </div>
+        <div class="price-card feat">
+          <div class="price-plan">Pro</div>
+          <div class="price-val">$12 <span>/ mo</span></div>
+          <div class="price-period">Billed monthly · cancel anytime</div>
+          <div class="price-div"></div>
+          <ul class="price-feats"><li>Unlimited searches</li><li>Up to 20 papers per search</li><li>Short + detailed + combined</li><li>AI & plagiarism detection</li><li>Multi-topic synthesis</li><li>Priority support</li></ul>
+          <button class="btn btn-primary btn-full" onclick="showPage('signup')">Start Pro Trial →</button>
+        </div>
+        <div class="price-card">
+          <div class="price-plan">Institution</div>
+          <div class="price-val">$49 <span>/ mo</span></div>
+          <div class="price-period">Per team · up to 20 members</div>
+          <div class="price-div"></div>
+          <ul class="price-feats"><li>Everything in Pro</li><li>Team collaboration</li><li>Shared research library</li><li>Admin dashboard</li><li>API access</li><li>Dedicated account manager</li></ul>
+          <button class="btn btn-dark btn-full" onclick="showPage('signup')">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <div class="foot-logo">Scholar<span>AI</span></div>
+      <div class="foot-links"><a onclick="showPage('home')">Home</a><a onclick="showPage('pricing')">Pricing</a><a onclick="showPage('signup')">Sign Up</a></div>
+      <div class="foot-copy">© 2026 ScholarAI. All rights reserved.</div>
+    </footer>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+  <div class="dsb" id="dsb-sidebar">
+    <div class="dsb-logo" onclick="showPage('home')">
+      <div class="dsb-logo-mark">⬡</div>
+      <div class="dsb-logo-text">Scholar<span>AI</span></div>
+    </div>
+    <div class="dsb-lbl">Main</div>
+    <div class="dsb-item act" onclick="setView('search',this)"><span class="dsb-item-icon">🔍</span>Research Search</div>
+    <div class="dsb-item" onclick="setView('history',this)"><span class="dsb-item-icon">📋</span>Search History</div>
+    <div class="dsb-item" onclick="setView('saved',this)"><span class="dsb-item-icon">⭐</span>Saved Library</div>
+    <div class="dsb-lbl">Tools</div>
+    <div class="dsb-item" onclick="setView('aicheck',this)"><span class="dsb-item-icon">🛡️</span>AI & Plagiarism<span class="dsb-badge">NEW</span></div>
+    <div class="dsb-item" onclick="showPage('chat-page')"><span class="dsb-item-icon">🤖</span>Research Mentor AI</div>
+    <div class="dsb-item" onclick="toggleVoice(true)"><span class="dsb-item-icon">🎙️</span>Voice Assistant<span class="dsb-badge">NEW</span></div>
+    <div class="dsb-item" onclick="showPage('pricing')"><span class="dsb-item-icon">⚡</span>Upgrade Plan</div>
+    <div class="dsb-lbl">Account</div>
+    <div class="dsb-item" onclick="setView('settings',this)"><span class="dsb-item-icon">⚙️</span>Settings</div>
+    <div class="dsb-item" onclick="showPage('home')"><span class="dsb-item-icon">←</span>Back to Home</div>
+    <div class="dsb-user">
+      <div class="dsb-user-av">H</div>
+      <div><div class="dsb-user-name">Hamza Maqsood</div><div class="dsb-user-plan">⚡ Free Plan</div></div>
+    </div>
+  </div>
+
+  <div class="dsb-main">
+    <div class="dsb-topbar">
+      <div class="dsb-page-title" id="dsb-title">Research Search</div>
+      <div style="display:flex;gap:.8rem">
+        <button class="btn btn-ghost" onclick="toggleVoice(true)">🎙️ Voice</button>
+        <button class="btn btn-ghost" onclick="showPage('chat-page')">🤖 Mentor AI</button>
+        <button class="btn btn-ghost" onclick="showPage('pricing')">⚡ Upgrade</button>
+      </div>
+    </div>
+
+    <div class="dsb-content">
+
+      <!-- SEARCH VIEW -->
+      <div id="v-search">
+        <div class="sform">
+          <div style="margin-bottom:.9rem">
+            <label class="slabel">Research Topics <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(one per line — search many at once)</span></label>
+            <div class="topic-input-wrap">
+              <textarea class="starea" id="d-topics" placeholder="machine learning&#10;computer vision&#10;natural language processing"></textarea>
+              <button class="mic-inline" id="topic-mic" onclick="dictateTopics()" title="Speak a topic">🎙️</button>
+            </div>
+          </div>
+          <div class="sgrid3">
+            <div><label class="slabel">Papers per Topic</label><input class="sinput" type="number" id="d-count" value="5" min="1" max="20"></div>
+            <div><label class="slabel">From Year</label><input class="sinput" type="number" id="d-start" value="2022" min="1990" max="2026"></div>
+            <div><label class="slabel">To Year</label><input class="sinput" type="number" id="d-end" value="2026" min="1990" max="2026"></div>
+          </div>
+          <div class="sgrid2">
+            <div><label class="slabel">Output Format</label><div class="radio-grp"><div class="radio-opt sel" id="ro-abs" onclick="selOpt('abstract')">📄 Abstract</div><div class="radio-opt" id="ro-sum" onclick="selOpt('summary')">🧠 Summary</div><div class="radio-opt" id="ro-both" onclick="selOpt('both')">✦ Both</div></div></div>
+            <div><label class="slabel">Summary Depth</label><div class="radio-grp"><div class="radio-opt sel" id="ro-sh" onclick="selDep('short')">Short</div><div class="radio-opt" id="ro-det" onclick="selDep('detailed')">Detailed</div></div></div>
+          </div>
+          <div id="d-alert"></div>
+          <div style="display:flex;gap:.9rem">
+            <button class="btn btn-primary btn-lg" style="flex:1" onclick="runSearch()">🔍 Search Papers</button>
+            <button class="btn btn-dark" onclick="clearRes()">Clear</button>
+          </div>
+        </div>
+        <div class="srow" id="d-stats" style="display:none">
+          <div class="scard"><div class="scard-val" id="st-total">0</div><div class="scard-lbl">Papers Found</div></div>
+          <div class="scard"><div class="scard-val" id="st-topics">0</div><div class="scard-lbl">Topics</div></div>
+          <div class="scard"><div class="scard-val" id="st-year">—</div><div class="scard-lbl">Year Range</div></div>
+          <div class="scard"><div class="scard-val" id="st-fmt">—</div><div class="scard-lbl">Format</div></div>
+        </div>
+        <div id="d-results"></div>
+        <div id="d-export" style="display:none">
+          <div class="export-box">
+            <div class="export-title">📄 Export Report</div>
+            <div class="export-sub">Download a professionally formatted report with combined overviews, every paper, authors, and links.</div>
+            <div class="export-row">
+              <button class="btn btn-primary" onclick="exportPDF()">⬇ Download PDF</button>
+              <button class="btn btn-dark" onclick="exportText()">⬇ Download as Text</button>
+              <button class="btn btn-dark" onclick="readReportAloud()">🔊 Read Overview Aloud</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY VIEW -->
+      <div id="v-history" style="display:none"></div>
+
+      <!-- SAVED VIEW -->
+      <div id="v-saved" style="display:none"></div>
+
+      <!-- AI / PLAGIARISM VIEW -->
+      <div id="v-aicheck" style="display:none">
+        <div class="sform">
+          <div class="check-grid">
+            <div class="check-mode sel" id="cm-ai" onclick="selCheck('ai')">
+              <div class="check-mode-icon">🤖</div>
+              <div class="check-mode-title">AI Content Detector</div>
+              <div class="check-mode-desc">Analyze whether text was written by AI, with a confidence score and the patterns detected.</div>
+            </div>
+            <div class="check-mode" id="cm-plag" onclick="selCheck('plagiarism')">
+              <div class="check-mode-icon">📋</div>
+              <div class="check-mode-title">Plagiarism Scan</div>
+              <div class="check-mode-desc">Extract key claims and scan 200M+ published papers for potential source matches.</div>
+            </div>
+          </div>
+          <label class="slabel">Paste text to analyze</label>
+          <textarea class="starea" id="check-text" style="min-height:160px" placeholder="Paste an abstract, paragraph, or passage (min. 50 characters)..."></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.5rem;margin-bottom:.9rem">
+            <span class="hint-txt" id="char-count" style="font-size:.72rem;color:var(--muted)">0 characters</span>
+            <button class="btn btn-dark btn-sm" onclick="document.getElementById('check-text').value='';updateCharCount()">Clear</button>
+          </div>
+          <div id="check-alert"></div>
+          <button class="btn btn-primary btn-lg btn-full" id="check-btn" onclick="runAICheck()">🛡️ Detect AI Content</button>
+        </div>
+        <div id="check-results"></div>
+      </div>
+
+      <!-- SETTINGS VIEW -->
+      <div id="v-settings" style="display:none">
+        <div style="max-width:520px">
+          <div style="margin-bottom:1.8rem">
+            <div style="font-family:var(--fd);font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:1rem">Profile</div>
+            <div style="background:var(--card);border:1px solid var(--b1);border-radius:13px;padding:1.4rem">
+              <div class="fg"><label class="slabel">Full Name</label><input class="sinput" value="Hamza Maqsood"></div>
+              <div class="fg"><label class="slabel">Email</label><input class="sinput" value="hamza@university.edu"></div>
+              <div class="fg"><label class="slabel">Role</label><select class="sselect"><option>PhD Student</option><option>Research Scientist</option></select></div>
+              <button class="btn btn-primary" onclick="toast('Profile saved','ok')">Save Changes</button>
+            </div>
+          </div>
+          <div style="margin-bottom:1.8rem">
+            <div style="font-family:var(--fd);font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:1rem">Voice & Preferences</div>
+            <div style="background:var(--card);border:1px solid var(--b1);border-radius:13px;padding:1.4rem">
+              <div class="fg"><label class="slabel">Voice Reading Speed</label><select class="sselect" id="set-rate" onchange="VA.rate=parseFloat(this.value)"><option value="0.9">Slow</option><option value="1" selected>Normal</option><option value="1.2">Fast</option></select></div>
+              <label class="rem-lbl" style="margin-bottom:.8rem"><input type="checkbox" id="set-autospeak"> Auto-read mentor replies aloud</label>
+              <div style="font-size:.78rem;color:var(--muted);line-height:1.5">Voice features use your browser's built-in speech engine — no audio leaves your device.</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:var(--fd);font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:1rem">Data & Account</div>
+            <div style="background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.15);border-radius:13px;padding:1.4rem">
+              <div style="font-size:.85rem;color:var(--muted2);margin-bottom:1rem">Clear saved data, sign out, or delete your account.</div>
+              <div style="display:flex;gap:.9rem;flex-wrap:wrap">
+                <button class="btn btn-dark btn-sm" onclick="clearAllData()">Clear Saved Data</button>
+                <button class="btn btn-ghost btn-sm" onclick="showPage('home')">Sign Out</button>
+                <button class="btn btn-sm" style="background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.2)" onclick="toast('Account deletion is disabled in demo','err')">Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH MENTOR CHAT -->
+<div class="page" id="chat-page">
+  <div class="chat-header">
+    <div class="nav-logo" onclick="showPage('dashboard')" style="cursor:pointer">
+      <div class="nav-logo-mark">⬡</div>
+      <div class="nav-logo-text">Scholar<span>AI</span></div>
+    </div>
+    <div class="chat-badge">Research Mentor · Live</div>
+    <div style="display:flex;gap:.7rem">
+      <button class="btn btn-ghost" onclick="clearChat()">New Chat</button>
+      <button class="btn btn-ghost" onclick="showPage('dashboard')">← Dashboard</button>
+      <button class="btn btn-primary" onclick="showPage('pricing')">⚡ Upgrade</button>
+    </div>
+  </div>
+
+  <div class="chat-layout">
+    <aside class="chat-sidebar">
+      <div class="chat-sidebar-top">
+        <div class="cs-label">Quick Actions</div>
+        <button class="qbtn" onclick="sendQ('What is academic research and how do I start?')"><span class="qbtn-icon">🎓</span><div><div class="qbtn-title">Research Basics</div><div class="qbtn-sub">What is research and how to begin</div></div></button>
+        <button class="qbtn" onclick="sendQ('Explain the complete research methodology process step by step')"><span class="qbtn-icon">🗺️</span><div><div class="qbtn-title">Research Methodology</div><div class="qbtn-sub">Steps, methods, and frameworks</div></div></button>
+        <button class="qbtn" onclick="sendQ('How do I write a literature review?')"><span class="qbtn-icon">📚</span><div><div class="qbtn-title">Literature Review</div><div class="qbtn-sub">Find, read, and synthesize papers</div></div></button>
+        <button class="qbtn" onclick="sendQ('Search papers on machine learning from 2024 to 2026')"><span class="qbtn-icon">🔍</span><div><div class="qbtn-title">Search Papers</div><div class="qbtn-sub">Try: "Search papers on [topic]"</div></div></button>
+        <button class="qbtn" onclick="sendQ('How do I write a research paper from scratch?')"><span class="qbtn-icon">✍️</span><div><div class="qbtn-title">Writing a Paper</div><div class="qbtn-sub">Structure, abstract, conclusion</div></div></button>
+      </div>
+      <div class="chat-sidebar-mid">
+        <div class="cs-label">Research Stages</div>
+        <button class="qbtn" onclick="sendQ('How do I identify and define a research problem or research gap?')"><span class="qbtn-icon">💡</span><div><div class="qbtn-title">Finding a Research Gap</div><div class="qbtn-sub">Identify problems worth solving</div></div></button>
+        <button class="qbtn" onclick="sendQ('How do I formulate a research hypothesis?')"><span class="qbtn-icon">🧪</span><div><div class="qbtn-title">Hypothesis Formulation</div><div class="qbtn-sub">Turn questions into testable statements</div></div></button>
+        <button class="qbtn" onclick="sendQ('How do I collect and analyze research data?')"><span class="qbtn-icon">📈</span><div><div class="qbtn-title">Data Collection & Analysis</div><div class="qbtn-sub">Methods, tools, interpretation</div></div></button>
+        <button class="qbtn" onclick="sendQ('What is the difference between qualitative and quantitative research?')"><span class="qbtn-icon">📊</span><div><div class="qbtn-title">Research Types</div><div class="qbtn-sub">Qualitative vs quantitative</div></div></button>
+        <button class="qbtn" onclick="sendQ('How do I cite sources and avoid plagiarism in research?')"><span class="qbtn-icon">🔗</span><div><div class="qbtn-title">Citations & Ethics</div><div class="qbtn-sub">APA, MLA, IEEE and plagiarism</div></div></button>
+      </div>
+      <div class="chat-sidebar-bot">
+        <div class="mentor-card">
+          <div class="mentor-card-title">⬡ Your Research Mentor</div>
+          <div class="mentor-card-desc">Ask anything about research, or type "Search papers on [topic]" to find real papers with AI summaries. Use 🎙️ to speak.</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="chat-area">
+      <div class="msgs" id="msgs">
+        <div class="welcome" id="welcome-msg">
+          <div class="welcome-icon">⬡</div>
+          <div class="welcome-title">Your <span>Research Mentor</span></div>
+          <div class="welcome-sub">Ask me anything about research — or search real academic papers by topic with AI summaries. You can speak to me with the mic.</div>
+          <div class="chips">
+            <div class="chip" onclick="sendQ('What is research and why is it important?')">What is research?</div>
+            <div class="chip" onclick="sendQ('Search papers on artificial intelligence from 2024 to 2026')">Search AI papers</div>
+            <div class="chip" onclick="sendQ('How do I write a strong abstract?')">Write an abstract</div>
+            <div class="chip" onclick="sendQ('What are the steps of the research process?')">Research process</div>
+            <div class="chip" onclick="sendQ('How do I find a research gap in my field?')">Find research gap</div>
+            <div class="chip" onclick="sendQ('Search papers on deep learning from 2023 to 2026')">Deep learning papers</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-wrap">
+          <textarea class="ibox" id="chat-input" placeholder="Ask about research... or type 'Search papers on [topic]'" rows="1" onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="chat-mic" id="chat-mic" onclick="dictateChat()" title="Speak your question">🎙️</button>
+          <button class="send-btn" id="send-btn" onclick="chatSend()">→</button>
+        </div>
+        <div class="input-hints">
+          <span class="hint-txt">Ask research questions, search papers, or speak with the mic</span>
+          <div class="hint-keys"><span class="hkey">Enter ↵ send</span><span class="hkey">Shift+↵ newline</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VOICE ASSISTANT -->
+<button class="voice-orb" id="voice-orb" onclick="toggleVoice()" title="Voice Assistant" style="display:none">🎙️</button>
+<div class="voice-panel" id="voice-panel">
+  <div class="voice-panel-head">
+    <div class="voice-panel-title">🎙️ Voice Assistant</div>
+    <button class="ptool" onclick="toggleVoice(false)">✕</button>
+  </div>
+  <div class="voice-viz" id="voice-viz">
+    <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+    <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+  </div>
+  <div class="voice-status" id="voice-status">Tap the mic and speak a command.</div>
+  <div class="voice-transcript" id="voice-transcript">Your words will appear here…</div>
+  <div class="voice-cmds">
+    <div class="voice-cmds-title">Try saying</div>
+    <div class="voice-cmd"><b>"Search papers on quantum computing"</b></div>
+    <div class="voice-cmd"><b>"Open the chatbot"</b> · <b>"Open AI checker"</b></div>
+    <div class="voice-cmd"><b>"Read the summary"</b> · <b>"Stop reading"</b></div>
+    <div class="voice-cmd"><b>"Export PDF"</b> · <b>"Clear results"</b></div>
+  </div>
+  <div class="voice-controls">
+    <button class="btn btn-primary btn-full btn-sm" id="voice-listen-btn" onclick="VA.toggleListen()">🎙️ Start Listening</button>
+    <button class="btn btn-dark btn-sm" onclick="VA.stopSpeaking()">🔇 Mute</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const API = 'http://localhost:5000/api';
+
+/* ─────────── ROUTING ─────────── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById(id); if(t)t.classList.add('active');
+  window.scroll({top:0,behavior:'instant'});
+  const isPublic=(id==='home'||id==='pricing');
+  document.getElementById('main-nav').style.display=isPublic?'flex':'none';
+  document.body.style.overflow=(id==='chat-page')?'hidden':'';
+  const inApp=(id==='dashboard'||id==='chat-page');
+  document.getElementById('voice-orb').style.display=inApp?'grid':'none';
+  if(!inApp)toggleVoice(false);
+}
+function scrollToSection(id){
+  const home=document.getElementById('home');
+  if(!home.classList.contains('active')){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    home.classList.add('active');
+    document.getElementById('main-nav').style.display='flex';
+  }
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});},150);
+}
+
+/* ─────────── DASHBOARD VIEWS ─────────── */
+function setView(view,el){
+  const views=['search','history','saved','aicheck','settings'];
+  views.forEach(v=>{const e=document.getElementById('v-'+v);if(e)e.style.display=(v===view)?'block':'none';});
+  document.querySelectorAll('.dsb-item').forEach(i=>i.classList.remove('act'));
+  if(el)el.classList.add('act');
+  const titles={search:'Research Search',history:'Search History',saved:'Saved Library',aicheck:'AI & Plagiarism Check',settings:'Settings'};
+  document.getElementById('dsb-title').textContent=titles[view]||'Dashboard';
+  if(view==='saved')renderSaved();
+  if(view==='history')renderHistory();
+}
+
+/* ─────────── OUTPUT OPTIONS ─────────── */
+let outType='abstract', sumDepth='short';
+function selOpt(o){
+  outType=o;
+  document.getElementById('ro-abs').classList.toggle('sel',o==='abstract');
+  document.getElementById('ro-sum').classList.toggle('sel',o==='summary');
+  document.getElementById('ro-both').classList.toggle('sel',o==='both');
+}
+function selDep(d){
+  sumDepth=d;
+  document.getElementById('ro-sh').classList.toggle('sel',d==='short');
+  document.getElementById('ro-det').classList.toggle('sel',d==='detailed');
+}
+
+/* ─────────── AUTH ─────────── */
+function handleSignup(){
+  const first=val('su-first'),email=val('su-email'),pass=document.getElementById('su-pass').value;
+  const el=document.getElementById('su-alert');
+  if(!first||!email){el.innerHTML=alertBox('⚠ Please fill in all required fields.','w');return;}
+  if(!email.includes('@')){el.innerHTML=alertBox('✕ Enter a valid email address.','e');return;}
+  if(pass.length<8){el.innerHTML=alertBox('✕ Password must be at least 8 characters.','e');return;}
+  el.innerHTML=alertBox('✓ Account created! Redirecting...','s');
+  setTimeout(()=>showPage('dashboard'),1100);
+}
+function handleSignin(){
+  const email=val('si-email'),pass=document.getElementById('si-pass').value;
+  const el=document.getElementById('si-alert');
+  if(!email||!pass){el.innerHTML=alertBox('⚠ Enter your email and password.','w');return;}
+  el.innerHTML=alertBox('✓ Signed in! Redirecting...','s');
+  setTimeout(()=>showPage('dashboard'),900);
+}
+const val=id=>document.getElementById(id).value.trim();
+const alertBox=(m,t)=>`<div class="alert alert-${t}">${m}</div>`;
+
+/* ─────────── SEARCH ─────────── */
+let searchResults=[], topicSummaries={};
+function setDAlert(m,t='w'){document.getElementById('d-alert').innerHTML=alertBox(m,t);}
+
+async function runSearch(){
+  const topicsRaw=val('d-topics');
+  const count=parseInt(document.getElementById('d-count').value);
+  const start=parseInt(document.getElementById('d-start').value);
+  const end=parseInt(document.getElementById('d-end').value);
+  document.getElementById('d-alert').innerHTML='';
+  if(!topicsRaw){setDAlert('⚠ Please enter at least one research topic.');return;}
+  if(start>end){setDAlert('⚠ Start year cannot be greater than end year.');return;}
+  const topics=topicsRaw.split('\n').map(t=>t.trim()).filter(Boolean);
+
+  document.getElementById('d-results').innerHTML=`<div class="load-state"><div class="load-spin"></div><div class="load-txt" id="load-txt">Searching ${topics.length} topic(s)...</div><div class="load-sub">Fetching papers & generating AI summaries</div></div>`;
+  document.getElementById('d-stats').style.display='none';
+  document.getElementById('d-export').style.display='none';
+
+  try{
+    const res=await fetch(`${API}/search`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topics,count,start_year:start,end_year:end,output_type:outType,summary_size:sumDepth})});
+    if(!res.ok)throw new Error('Server '+res.status);
+    const data=await res.json();
+    searchResults=data.papers||[];
+    topicSummaries=data.topic_summaries||{};
+    renderResults(topics,start,end,data.total);
+    saveHistory(topics,start,end,data.total);
+  }catch(e){
+    await fallbackSearch(topics,count,start,end);
+    saveHistory(topics,start,end,searchResults.length);
+  }
+}
+
+function invAbstract(inv){
+  if(!inv)return'';const pos=[];
+  for(const w in inv)for(const i of inv[w])pos.push([i,w]);
+  pos.sort((a,b)=>a[0]-b[0]);return pos.map(x=>x[1]).join(' ');
+}
+async function openAlexSearch(topic,count,start,end){
+  const url=`https://api.openalex.org/works?search=${encodeURIComponent(topic)}&filter=from_publication_date:${start}-01-01,to_publication_date:${end}-12-31&per-page=${Math.min(count,25)}&sort=relevance_score:desc&mailto=scholarai@example.com`;
+  const res=await fetch(url);
+  if(!res.ok)return[];
+  const data=await res.json();
+  return(data.results||[]).map(w=>{
+    const loc=w.primary_location||{},src=loc.source||{};
+    return{
+      title:w.title||'No title',
+      abstract:invAbstract(w.abstract_inverted_index)||'No abstract available.',
+      year:w.publication_year||'Unknown',
+      url:loc.landing_page_url||w.doi||w.id||'#',
+      authors:(w.authorships||[]).slice(0,4).map(a=>a.author&&a.author.display_name).filter(Boolean),
+      venue:src.display_name||''
+    };
+  });
+}
+async function fallbackSearch(topics,count,start,end){
+  searchResults=[];topicSummaries={};
+  for(let i=0;i<topics.length;i++){
+    const lt=document.getElementById('load-txt');if(lt)lt.textContent=`Searching "${topics[i]}"... (${i+1}/${topics.length})`;
+    try{
+      const papers=await openAlexSearch(topics[i],count,start,end);
+      papers.forEach(p=>{p.summary='';p.output=p.abstract;p.topic=topics[i];searchResults.push(p);});
+    }catch(e){}
+    if(i<topics.length-1)await new Promise(r=>setTimeout(r,400));
+  }
+  renderResults(topics,start,end,searchResults.length);
+  if(outType!=='abstract')toast('Showing abstracts. AI summaries need the backend (python server.py).','err');
+}
+
+function renderResults(topics,start,end,total){
+  const el=document.getElementById('d-results');
+  if(!searchResults.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No papers found</div><div class="empty-desc">Try a broader year range or different keywords</div></div>`;
+    return;
+  }
+  document.getElementById('st-total').textContent=total;
+  document.getElementById('st-topics').textContent=topics.length;
+  document.getElementById('st-year').textContent=`${start}–${end}`;
+  document.getElementById('st-fmt').textContent=cap(outType);
+  document.getElementById('d-stats').style.display='grid';
+
+  let html='';
+  topics.forEach(topic=>{
+    const papers=searchResults.filter(p=>p.topic===topic);
+    if(!papers.length)return;
+    html+=`<div style="margin-bottom:2rem">`;
+    const cs=topicSummaries[topic];
+    if(cs){
+      html+=`<div class="combined-card"><div class="combined-head"><div class="combined-title">🧬 ${esc(cap(topic))}<span class="combined-tag">Combined Overview</span></div><div style="font-family:var(--fm);font-size:.7rem;color:var(--gold)">${papers.length} papers · ${start}–${end}</div></div><div class="combined-body" id="cs-${slug(topic)}">${esc(cs)}</div><div class="combined-actions"><button class="btn btn-dark btn-sm" onclick="VA.speak(document.getElementById('cs-${slug(topic)}').textContent)">🔊 Read Aloud</button><button class="btn btn-dark btn-sm" onclick="copyText(document.getElementById('cs-${slug(topic)}').textContent)">📋 Copy</button></div></div>`;
+    }else{
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><div style="font-family:var(--fd);font-size:1.25rem;font-weight:700;color:var(--white)">${esc(cap(topic))}</div><div style="font-family:var(--fm);font-size:.7rem;color:var(--gold);background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.2);border-radius:20px;padding:3px 11px">${papers.length} papers · ${start}–${end}</div></div>`;
+    }
+    papers.forEach((p,i)=>{
+      const gi=searchResults.indexOf(p);
+      html+=renderPaperCard(p,i,gi);
+    });
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
+  document.getElementById('d-export').style.display='block';
+  refreshSaveButtons();
+}
+
+function renderPaperCard(p,i,gi){
+  const authors=p.authors&&p.authors.length?`<div class="pcard-authors">${esc(p.authors.slice(0,3).join(', '))}${p.authors.length>3?' et al.':''}</div>`:'';
+  const venue=p.venue?`<span class="ptag ptag-vn" title="${esc(p.venue)}">${esc(p.venue)}</span>`:'';
+  let body='';
+  if(outType==='abstract'||outType==='both'){
+    body+=`<div class="pcard-sec"><div class="pcard-olbl">📄 Abstract</div><div class="pcard-otxt">${esc(p.abstract||'No abstract available.')}</div></div>`;
+  }
+  if(outType==='summary'||outType==='both'){
+    const s=p.summary||p.output||'';
+    if(s)body+=`<div class="pcard-sec"><div class="pcard-olbl">🧠 AI Summary <span class="msg-speak" onclick="VA.speak(\`${jsq(s)}\`)">🔊</span></div><div class="pcard-otxt">${esc(s)}</div></div>`;
+  }
+  const isSaved=savedPapers.some(sp=>sp.title===p.title);
+  return `<div class="pcard"><div class="pcard-top"><div style="flex:1"><div class="pcard-idx">PAPER ${String(i+1).padStart(2,'0')}</div><div class="pcard-title">${esc(p.title)}</div>${authors}</div>
+    <div class="pcard-tools">
+      <button class="ptool save-btn ${isSaved?'saved':''}" data-gi="${gi}" onclick="toggleSave(${gi},this)" title="Save to library">${isSaved?'★':'☆'}</button>
+      <button class="ptool" onclick="toggleCite(${gi},this)" title="Cite">❝</button>
+      <div class="cite-menu" id="cite-${gi}"></div>
+    </div></div>
+    <div class="pcard-meta"><span class="ptag ptag-yr">${p.year}</span><span class="ptag ptag-tp">${esc(p.topic||'')}</span>${venue}<a class="pcard-link" href="${p.url}" target="_blank" rel="noopener">↗ Read Full Paper</a></div>
+    ${body}</div>`;
+}
+
+function clearRes(){
+  searchResults=[];topicSummaries={};
+  document.getElementById('d-results').innerHTML='';
+  document.getElementById('d-stats').style.display='none';
+  document.getElementById('d-export').style.display='none';
+  document.getElementById('d-alert').innerHTML='';
+}
+
+/* ─────────── CITATIONS ─────────── */
+function fmtAuthorsCite(authors,style){
+  if(!authors||!authors.length)return'Unknown Author';
+  if(style==='apa')return authors.map(a=>{const parts=a.split(' ');const last=parts.pop();const initials=parts.map(p=>p[0]+'.').join(' ');return `${last}, ${initials}`;}).join(', ');
+  if(style==='mla')return authors[0]+(authors.length>1?', et al.':'');
+  if(style==='ieee')return authors.map(a=>{const parts=a.split(' ');const last=parts.pop();const initials=parts.map(p=>p[0]+'.').join('');return `${initials} ${last}`;}).join(', ');
+  return authors.join(', ');
+}
+function genCite(p,style){
+  const A=p.authors||[],y=p.year||'n.d.',t=p.title||'Untitled',v=p.venue||'',u=p.url||'';
+  if(style==='apa')return `${fmtAuthorsCite(A,'apa')} (${y}). ${t}. ${v?'<i>'+v+'</i>. ':''}${u}`;
+  if(style==='mla')return `${fmtAuthorsCite(A,'mla')}. "${t}." ${v?'<i>'+v+'</i>, ':''}${y}, ${u}.`;
+  if(style==='ieee')return `${fmtAuthorsCite(A,'ieee')}, "${t}," ${v?v+', ':''}${y}. [Online]. Available: ${u}`;
+  if(style==='bibtex'){
+    const key=(A[0]?A[0].split(' ').pop():'ref')+y;
+    return `@article{${key},<br>&nbsp;title={${t}},<br>&nbsp;author={${A.join(' and ')}},<br>&nbsp;${v?'journal={'+v+'},<br>&nbsp;':''}year={${y}},<br>&nbsp;url={${u}}<br>}`;
+  }
+}
+let citeStyleState={};
+function toggleCite(gi,btn){
+  document.querySelectorAll('.cite-menu.open').forEach(m=>{if(m.id!=='cite-'+gi)m.classList.remove('open');});
+  const menu=document.getElementById('cite-'+gi);
+  if(menu.classList.contains('open')){menu.classList.remove('open');return;}
+  citeStyleState[gi]=citeStyleState[gi]||'apa';
+  renderCiteMenu(gi);
+  menu.classList.add('open');
+}
+function renderCiteMenu(gi){
+  const p=searchResults[gi];const style=citeStyleState[gi]||'apa';const menu=document.getElementById('cite-'+gi);
+  const styles=['apa','mla','ieee','bibtex'];
+  menu.innerHTML=`<div class="cite-tabs">${styles.map(s=>`<div class="cite-tab ${s===style?'act':''}" onclick="setCiteStyle(${gi},'${s}')">${s.toUpperCase()}</div>`).join('')}</div><div class="cite-text" id="cite-text-${gi}">${genCite(p,style)}</div><button class="btn btn-primary btn-sm cite-copy" onclick="copyText(document.getElementById('cite-text-${gi}').innerText)">📋 Copy Citation</button>`;
+}
+function setCiteStyle(gi,s){citeStyleState[gi]=s;renderCiteMenu(gi);}
+
+/* ─────────── SAVE / LIBRARY ─────────── */
+let savedPapers=JSON.parse(localStorage.getItem('scholar_saved')||'[]');
+function toggleSave(gi,btn){
+  const p=searchResults[gi];if(!p)return;
+  const idx=savedPapers.findIndex(sp=>sp.title===p.title);
+  if(idx>=0){savedPapers.splice(idx,1);toast('Removed from library');}
+  else{savedPapers.push(p);toast('Saved to library','ok');}
+  localStorage.setItem('scholar_saved',JSON.stringify(savedPapers));
+  refreshSaveButtons();
+}
+function refreshSaveButtons(){
+  document.querySelectorAll('.save-btn').forEach(b=>{
+    const gi=parseInt(b.dataset.gi);const p=searchResults[gi];if(!p)return;
+    const on=savedPapers.some(sp=>sp.title===p.title);
+    b.classList.toggle('saved',on);b.textContent=on?'★':'☆';
+  });
+}
+function renderSaved(){
+  const el=document.getElementById('v-saved');
+  if(!savedPapers.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-title">No saved papers</div><div class="empty-desc">Save papers from your search results to build your library</div></div>`;return;}
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem"><div style="font-family:var(--fd);font-size:1.2rem;color:var(--white)">${savedPapers.length} Saved Paper(s)</div><button class="btn btn-dark btn-sm" onclick="savedPapers=[];localStorage.setItem('scholar_saved','[]');renderSaved();toast('Library cleared')">Clear All</button></div>`;
+  savedPapers.forEach((p,i)=>{
+    const authors=p.authors&&p.authors.length?`<div class="pcard-authors">${esc(p.authors.slice(0,3).join(', '))}${p.authors.length>3?' et al.':''}</div>`:'';
+    html+=`<div class="pcard"><div class="pcard-top"><div style="flex:1"><div class="pcard-idx">SAVED ${String(i+1).padStart(2,'0')}</div><div class="pcard-title">${esc(p.title)}</div>${authors}</div><button class="ptool saved" onclick="unsaveByTitle(\`${jsq(p.title)}\`)" title="Remove">★</button></div><div class="pcard-meta"><span class="ptag ptag-yr">${p.year}</span><span class="ptag ptag-tp">${esc(p.topic||'')}</span><a class="pcard-link" href="${p.url}" target="_blank" rel="noopener">↗ Read Full Paper</a></div><div class="pcard-sec"><div class="pcard-otxt">${esc((p.summary||p.abstract||'').slice(0,400))}${(p.summary||p.abstract||'').length>400?'…':''}</div></div></div>`;
+  });
+  el.innerHTML=html;
+}
+function unsaveByTitle(title){
+  savedPapers=savedPapers.filter(p=>p.title!==title);
+  localStorage.setItem('scholar_saved',JSON.stringify(savedPapers));
+  renderSaved();refreshSaveButtons();toast('Removed from library');
+}
+
+/* ─────────── HISTORY ─────────── */
+let searchHistory=JSON.parse(localStorage.getItem('scholar_history')||'[]');
+function saveHistory(topics,start,end,total){
+  searchHistory.unshift({topics,start,end,total,fmt:outType,depth:sumDepth,ts:Date.now()});
+  searchHistory=searchHistory.slice(0,30);
+  localStorage.setItem('scholar_history',JSON.stringify(searchHistory));
+}
+function renderHistory(){
+  const el=document.getElementById('v-history');
+  if(!searchHistory.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No search history yet</div><div class="empty-desc">Your past searches will appear here</div></div>`;return;}
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem"><div style="font-family:var(--fd);font-size:1.2rem;color:var(--white)">${searchHistory.length} Past Search(es)</div><button class="btn btn-dark btn-sm" onclick="searchHistory=[];localStorage.setItem('scholar_history','[]');renderHistory();toast('History cleared')">Clear All</button></div>`;
+  searchHistory.forEach((h,i)=>{
+    const date=new Date(h.ts).toLocaleString();
+    html+=`<div class="pcard"><div class="pcard-top"><div style="flex:1"><div class="pcard-idx">${date}</div><div class="pcard-title">${esc(h.topics.join(', '))}</div><div class="pcard-meta"><span class="ptag ptag-yr">${h.start}–${h.end}</span><span class="ptag ptag-tp">${h.total} papers</span><span class="ptag ptag-vn">${h.fmt}</span></div></div><button class="btn btn-primary btn-sm" onclick="rerunHistory(${i})">↻ Run Again</button></div></div>`;
+  });
+  el.innerHTML=html;
+}
+function rerunHistory(i){
+  const h=searchHistory[i];
+  document.getElementById('d-topics').value=h.topics.join('\n');
+  document.getElementById('d-start').value=h.start;
+  document.getElementById('d-end').value=h.end;
+  selOpt(h.fmt||'abstract');selDep(h.depth||'short');
+  const items=document.querySelectorAll('.dsb-item');
+  setView('search',items[0]);
+  runSearch();
+}
+
+/* ─────────── EXPORT ─────────── */
+async function exportPDF(){
+  if(!searchResults.length)return;
+  const topics=[...new Set(searchResults.map(p=>p.topic))];
+  const start=parseInt(document.getElementById('d-start').value);
+  const end=parseInt(document.getElementById('d-end').value);
+  toast('Generating PDF…');
+  try{
+    const res=await fetch(`${API}/export`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({papers:searchResults,topics,start_year:start,end_year:end,output_type:outType,topic_summaries:topicSummaries})});
+    if(!res.ok)throw new Error();
+    const blob=await res.blob();const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`scholar_ai_${Date.now()}.pdf`;a.click();
+    URL.revokeObjectURL(url);toast('PDF downloaded','ok');
+  }catch(e){
+    setDAlert('PDF needs the backend. Downloading a text report instead — start the server with: python server.py','w');
+    exportText();
+  }
+}
+function exportText(){
+  if(!searchResults.length)return;
+  const topics=[...new Set(searchResults.map(p=>p.topic))];
+  const start=document.getElementById('d-start').value,end=document.getElementById('d-end').value;
+  let txt=`SCHOLAR AI — RESEARCH REPORT\n${'='.repeat(50)}\nTopics: ${topics.join(', ')}\nYear Range: ${start}-${end}\nPapers: ${searchResults.length}\nGenerated: ${new Date().toLocaleString()}\n\n`;
+  topics.forEach(topic=>{
+    const papers=searchResults.filter(p=>p.topic===topic);if(!papers.length)return;
+    txt+=`\n${'-'.repeat(50)}\nTOPIC: ${topic.toUpperCase()}\n${'-'.repeat(50)}\n`;
+    if(topicSummaries[topic])txt+=`\nCOMBINED OVERVIEW:\n${topicSummaries[topic]}\n`;
+    papers.forEach((p,i)=>{
+      txt+=`\n${i+1}. ${p.title} (${p.year})\n`;
+      if(p.authors&&p.authors.length)txt+=`   Authors: ${p.authors.join(', ')}\n`;
+      txt+=`   Link: ${p.url}\n`;
+      if(outType==='abstract'||outType==='both')txt+=`   Abstract: ${p.abstract}\n`;
+      if((outType==='summary'||outType==='both')&&(p.summary||p.output))txt+=`   Summary: ${p.summary||p.output}\n`;
+    });
+  });
+  const blob=new Blob([txt],{type:'text/plain'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`scholar_ai_${Date.now()}.txt`;a.click();
+  URL.revokeObjectURL(url);toast('Text report downloaded','ok');
+}
+function readReportAloud(){
+  const overviews=Object.entries(topicSummaries).map(([t,s])=>`${t}. ${s}`).join('. ');
+  if(overviews)VA.speak('Here is your research overview. '+overviews);
+  else VA.speak('No combined overview is available. Run a search with summary or both as the output format.');
+}
+
+/* ─────────── AI / PLAGIARISM CHECK ─────────── */
+let checkMode='ai';
+function selCheck(m){
+  checkMode=m;
+  document.getElementById('cm-ai').classList.toggle('sel',m==='ai');
+  document.getElementById('cm-plag').classList.toggle('sel',m==='plagiarism');
+  document.getElementById('check-btn').textContent=m==='ai'?'🛡️ Detect AI Content':'📋 Scan for Plagiarism';
+}
+function updateCharCount(){
+  const n=document.getElementById('check-text').value.length;
+  document.getElementById('char-count').textContent=`${n} characters`;
+}
+async function runAICheck(){
+  const text=document.getElementById('check-text').value.trim();
+  document.getElementById('check-alert').innerHTML='';
+  if(text.length<50){document.getElementById('check-alert').innerHTML=alertBox('⚠ Please enter at least 50 characters.','w');return;}
+  const btn=document.getElementById('check-btn');btn.disabled=true;
+  document.getElementById('check-results').innerHTML=`<div class="load-state"><div class="load-spin"></div><div class="load-txt">${checkMode==='ai'?'Analyzing writing patterns…':'Scanning published papers…'}</div></div>`;
+  try{
+    const res=await fetch(`${API}/ai-check`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,type:checkMode})});
+    if(!res.ok){const er=await res.json().catch(()=>({}));throw new Error(er.error||'Server error');}
+    const data=await res.json();
+    checkMode==='ai'?renderAIResult(data):renderPlagResult(data);
+  }catch(e){
+    document.getElementById('check-results').innerHTML='';
+    document.getElementById('check-alert').innerHTML=alertBox('✕ This feature needs the backend running. Start it with: python server.py','e');
+  }finally{btn.disabled=false;}
+}
+function gauge(pct,color,label){
+  const r=62,c=2*Math.PI*r,off=c*(1-pct/100);
+  return `<div class="gauge"><svg width="150" height="150"><circle cx="75" cy="75" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="11"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/></svg><div class="gauge-val"><div class="gauge-num" style="color:${color}">${pct}%</div><div class="gauge-lbl">${label}</div></div></div>`;
+}
+function renderAIResult(d){
+  const aiScore=d.ai_score??d.confidence??50;
+  const humanScore=d.human_score??(100-aiScore);
+  const isAI=d.is_ai;
+  const patterns=(d.patterns||[]).map(p=>`<li>${esc(p)}</li>`).join('');
+  document.getElementById('check-results').innerHTML=`
+    <div class="sform">
+      <div class="verdict-box ${isAI?'verdict-ai':'verdict-human'}">${isAI?'🤖':'✍️'} <b>${esc(d.verdict||(isAI?'Likely AI-generated':'Likely human-written'))}</b></div>
+      <div class="gauge-wrap">${gauge(aiScore,'#F87171','AI-Written')}${gauge(humanScore,'#34D399','Human')}</div>
+      ${patterns?`<div><div class="pcard-olbl" style="margin-bottom:.5rem">Patterns Detected</div><ul class="pattern-list">${patterns}</ul></div>`:''}
+      <div style="font-size:.72rem;color:var(--muted);margin-top:1rem;line-height:1.5">⚠ AI detection is probabilistic and should be used as guidance, not proof. No detector is 100% accurate.</div>
+    </div>`;
+}
+function renderPlagResult(d){
+  const papers=d.matched_papers||[];
+  let html=`<div class="sform"><div class="verdict-box ${papers.length?'verdict-ai':'verdict-human'}">${papers.length?'⚠':'✓'} <b>${papers.length?`Found ${papers.length} potentially related published source(s)`:'No close published matches found'}</b></div>`;
+  if(d.phrases_checked&&d.phrases_checked.length){
+    html+=`<div class="pcard-olbl" style="margin-bottom:.5rem">Key Phrases Checked</div><ul class="pattern-list">${d.phrases_checked.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+  }
+  if(papers.length){
+    html+=`<div class="pcard-olbl" style="margin:1.1rem 0 .5rem">Potential Source Matches</div>`;
+    papers.forEach((p,i)=>{
+      html+=`<div class="paper-result"><div class="pr-num">MATCH ${String(i+1).padStart(2,'0')} · phrase: "${esc((p.matched_phrase||'').slice(0,60))}"</div><div class="pr-title">${esc(p.title)}</div><div class="pr-meta"><span class="pr-tag pr-yr">${p.year}</span><a class="pr-link" href="${p.url}" target="_blank" rel="noopener">↗ Compare Source</a></div><div class="pr-body">${esc((p.abstract||'').slice(0,200))}…</div></div>`;
+    });
+  }
+  html+=`<div style="font-size:.72rem;color:var(--muted);margin-top:1rem;line-height:1.5">⚠ This is a similarity indicator across published abstracts, not a definitive originality report.</div></div>`;
+  document.getElementById('check-results').innerHTML=html;
+}
+
+/* ─────────── CHAT ─────────── */
+let chatHistory=[],chatLoading=false;
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,110)+'px';}
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatSend();}}
+function sendQ(text){document.getElementById('chat-input').value=text;chatSend();}
+
+async function chatSend(){
+  const input=document.getElementById('chat-input');const text=input.value.trim();
+  if(!text||chatLoading)return;
+  const wm=document.getElementById('welcome-msg');if(wm)wm.remove();
+  input.value='';input.style.height='auto';
+  appendUser(text);chatHistory.push({role:'user',content:text});
+  setChatLoad(true);showTyping();
+  try{
+    const res=await fetch(`${API}/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history:chatHistory})});
+    removeTyping();
+    if(res.ok){
+      const data=await res.json();
+      chatHistory.push({role:'assistant',content:data.message});
+      appendAI(data.message,data.papers||[]);
+      if(document.getElementById('set-autospeak')?.checked)VA.speak(data.message);
+    }else throw new Error('Backend error');
+  }catch(e){removeTyping();await handleFallback(text);}
+  setChatLoad(false);
+}
+async function handleFallback(text){
+  const lower=text.toLowerCase();
+  const isSearch=lower.includes('search')||lower.includes('find papers')||lower.includes('papers on')||lower.includes('research on');
+  if(isSearch){
+    let topic=text.replace(/search papers on|find papers about|search for papers on|papers on|research on|show papers on|from \d{4}.*|to \d{4}.*/gi,'').trim();
+    const ym=text.match(/(\d{4})\s*(?:to|-)\s*(\d{4})/);
+    const start=ym?parseInt(ym[1]):2022,end=ym?parseInt(ym[2]):2026;
+    showStatusBar(`Searching Semantic Scholar for "${topic}"...`);
+    const papers=await fetchPapersDirect(topic,5,start,end);hideStatusBar();
+    const msg=papers.length?`I found **${papers.length} papers** on **${topic}** (${start}–${end}). Here are the results with abstracts:`:`I searched for papers on **${topic}** but couldn't find results for ${start}–${end}. Try a broader year range.`;
+    chatHistory.push({role:'assistant',content:msg});appendAI(msg,papers);
+  }else{
+    const fb="I'm your Research Mentor. I can help with research methodology, literature reviews, paper writing, and more. I can also search real academic papers — just type 'Search papers on [topic]'. **Note:** For full AI-powered responses, please start the backend: `python server.py`";
+    chatHistory.push({role:'assistant',content:fb});appendAI(fb,[]);
+  }
+}
+async function fetchPapersDirect(topic,count,start,end){
+  try{return await openAlexSearch(topic,count,start,end);}catch(e){return[];}
+}
+function appendUser(text){
+  const m=document.getElementById('msgs');const el=document.createElement('div');el.className='msg user fade-in';
+  el.innerHTML=`<div class="msg-av user">H</div><div class="msg-body"><div class="msg-name">You</div><div class="msg-bubble">${esc(text).replace(/\n/g,'<br>')}</div></div>`;
+  m.appendChild(el);scrollMsgs();
+}
+function appendAI(text,papers){
+  const m=document.getElementById('msgs');const el=document.createElement('div');el.className='msg assistant fade-in';
+  let ph='';
+  if(papers&&papers.length){
+    ph=`<div class="chat-divider"><span>${papers.length} papers found</span></div>`;
+    papers.forEach((p,i)=>{
+      const sum=p.output||p.abstract||'';
+      ph+=`<div class="paper-result"><div class="pr-num">PAPER ${String(i+1).padStart(2,'0')}</div><div class="pr-title">${esc(p.title)}</div><div class="pr-meta"><span class="pr-tag pr-yr">${p.year}</span><a class="pr-link" href="${p.url}" target="_blank" rel="noopener">↗ Read Paper</a></div><div class="pr-body">${esc(sum.slice(0,260))}${sum.length>260?'…':''}</div></div>`;
+    });
+  }
+  const sid='spk-'+(Date.now())+Math.floor(Math.random()*999);
+  el.innerHTML=`<div class="msg-av ai">⬡</div><div class="msg-body"><div class="msg-name">Scholar AI Mentor <span class="msg-speak" onclick="VA.speak(document.getElementById('${sid}').dataset.raw)">🔊</span></div><div class="msg-bubble"><span id="${sid}" data-raw="${esc(text)}">${fmtText(text)}</span>${ph}</div></div>`;
+  m.appendChild(el);scrollMsgs();
+}
+function fmtText(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`(.+?)`/g,'<code>$1</code>').replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>').replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs,m=>`<ul>${m}</ul>`).replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>').replace(/^(.+)$/,'<p>$1</p>');
+}
+function showTyping(){
+  const m=document.getElementById('msgs');const el=document.createElement('div');el.className='msg assistant';el.id='typing';
+  el.innerHTML=`<div class="msg-av ai">⬡</div><div class="msg-body"><div class="msg-name">Scholar AI Mentor</div><div class="msg-bubble" style="padding:.7rem 1rem"><div class="typing-ind"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div></div>`;
+  m.appendChild(el);scrollMsgs();
+}
+function removeTyping(){document.getElementById('typing')?.remove();}
+let statusEl=null;
+function showStatusBar(msg){const m=document.getElementById('msgs');statusEl=document.createElement('div');statusEl.className='status-bar fade-in';statusEl.innerHTML=`<div class="sspinner"></div><span>${esc(msg)}</span>`;m.appendChild(statusEl);scrollMsgs();}
+function hideStatusBar(){statusEl?.remove();statusEl=null;}
+function setChatLoad(v){chatLoading=v;document.getElementById('send-btn').disabled=v;}
+function scrollMsgs(){const m=document.getElementById('msgs');setTimeout(()=>m.scrollTop=m.scrollHeight,50);}
+function clearChat(){chatHistory=[];document.getElementById('msgs').innerHTML=`<div class="welcome fade-in" id="welcome-msg"><div class="welcome-icon">⬡</div><div class="welcome-title">Your <span>Research Mentor</span></div><div class="welcome-sub">Ask me anything about research — or search real academic papers by topic with AI summaries.</div><div class="chips"><div class="chip" onclick="sendQ('What is research and why is it important?')">What is research?</div><div class="chip" onclick="sendQ('Search papers on artificial intelligence from 2024 to 2026')">Search AI papers</div><div class="chip" onclick="sendQ('How do I write a strong abstract?')">Write an abstract</div><div class="chip" onclick="sendQ('What are the steps of the research process?')">Research process</div><div class="chip" onclick="sendQ('How do I find a research gap in my field?')">Find research gap</div><div class="chip" onclick="sendQ('Search papers on deep learning from 2023 to 2026')">Deep learning papers</div></div></div>`;}
+
+/* ─────────── VOICE ASSISTANT ─────────── */
+const VA={
+  rec:null,listening:false,rate:1,target:'command',supported:false,_last:'',_base:'',
+  init(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){this.supported=false;return;}
+    this.supported=true;
+    this.rec=new SR();this.rec.continuous=false;this.rec.interimResults=true;this.rec.lang='en-US';
+    this.rec.onresult=e=>{
+      let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
+      if(this.target==='command'){document.getElementById('voice-transcript').textContent=txt;}
+      else if(this.target==='topics'){document.getElementById('d-topics').value=(this._base?this._base+'\n':'')+txt;}
+      else if(this.target==='chat'){const ci=document.getElementById('chat-input');ci.value=txt;autoResize(ci);}
+      this._last=txt;
+    };
+    this.rec.onend=()=>{
+      this.listening=false;this.updateUI();
+      if(this.target==='command'&&this._last)this.handleCommand(this._last);
+      this._last='';
+    };
+    this.rec.onerror=ev=>{this.listening=false;this.updateUI();if(ev.error==='not-allowed')toast('Microphone permission denied','err');};
+  },
+  startListen(target='command'){
+    if(!this.supported){toast('Voice not supported here. Try Chrome or Edge.','err');return;}
+    if(this.listening){try{this.rec.stop();}catch(e){}}
+    this.target=target;this._last='';
+    if(target==='topics')this._base=document.getElementById('d-topics').value.trim();
+    try{this.rec.start();this.listening=true;this.updateUI();
+      if(target==='command')document.getElementById('voice-status').innerHTML='<b>Listening…</b> speak now';
+    }catch(e){}
+  },
+  toggleListen(){this.listening?this.rec.stop():this.startListen('command');},
+  stopListen(){if(this.listening){try{this.rec.stop();}catch(e){}}},
+  updateUI(){
+    document.getElementById('voice-orb').classList.toggle('listening',this.listening&&this.target==='command');
+    document.getElementById('voice-panel').classList.toggle('active-listen',this.listening&&this.target==='command');
+    const lb=document.getElementById('voice-listen-btn');if(lb)lb.textContent=this.listening?'⏹ Stop Listening':'🎙️ Start Listening';
+    document.getElementById('topic-mic')?.classList.toggle('listening',this.listening&&this.target==='topics');
+    document.getElementById('chat-mic')?.classList.toggle('listening',this.listening&&this.target==='chat');
+    if(!this.listening&&this.target==='command')document.getElementById('voice-status').textContent='Tap the mic and speak a command.';
+  },
+  speak(text){
+    if(!('speechSynthesis'in window)){toast('Speech output not supported','err');return;}
+    speechSynthesis.cancel();
+    const clean=String(text).replace(/[#*_`>]/g,'').replace(/\s+/g,' ').slice(0,600);
+    const u=new SpeechSynthesisUtterance(clean);u.rate=this.rate;u.pitch=1;u.lang='en-US';
+    speechSynthesis.speak(u);
+  },
+  stopSpeaking(){if('speechSynthesis'in window)speechSynthesis.cancel();},
+  handleCommand(cmd){
+    const c=cmd.toLowerCase().trim();
+    document.getElementById('voice-status').innerHTML=`Heard: <b>${esc(cmd)}</b>`;
+    if(c.includes('search')||c.includes('find papers')||c.includes('papers on')){
+      let topic=cmd.replace(/.*?(?:search papers on|search for|find papers about|papers on|search)/i,'').replace(/from \d{4}.*|to \d{4}.*/gi,'').trim();
+      const ym=cmd.match(/(\d{4})\s*(?:to|-)\s*(\d{4})/);
+      if(document.getElementById('dashboard').classList.contains('active')){
+        if(topic){document.getElementById('d-topics').value=topic;
+          if(ym){document.getElementById('d-start').value=ym[1];document.getElementById('d-end').value=ym[2];}
+          this.speak('Searching papers on '+topic);runSearch();toggleVoice(false);}
+      }else{showPage('dashboard');setTimeout(()=>{document.getElementById('d-topics').value=topic;runSearch();},300);}
+    }
+    else if(c.includes('chatbot')||c.includes('mentor')||c.includes('open chat')){this.speak('Opening the research mentor');showPage('chat-page');toggleVoice(false);}
+    else if(c.includes('plagiarism')||c.includes('ai check')||c.includes('ai checker')||c.includes('detector')){this.speak('Opening AI and plagiarism checker');showPage('dashboard');const items=document.querySelectorAll('.dsb-item');setView('aicheck',items[3]);toggleVoice(false);}
+    else if((c.includes('read')&&(c.includes('summary')||c.includes('overview')||c.includes('report')))){readReportAloud();}
+    else if(c.includes('stop reading')||c.includes('stop')||c.includes('mute')){this.stopSpeaking();}
+    else if(c.includes('export')||c.includes('download')||c.includes('pdf')){if(searchResults.length){this.speak('Exporting your report');exportPDF();}else this.speak('Run a search first.');}
+    else if(c.includes('clear')){clearRes();this.speak('Results cleared');}
+    else if(c.includes('home')||c.includes('dashboard')){showPage('dashboard');toggleVoice(false);}
+    else{this.speak("I didn't catch a command. Try: search papers on a topic, open the chatbot, or export PDF.");}
+  }
+};
+function toggleVoice(force){
+  const panel=document.getElementById('voice-panel');
+  const open=force===undefined?!panel.classList.contains('open'):force;
+  panel.classList.toggle('open',open);
+  if(open&&!VA.supported)document.getElementById('voice-status').innerHTML='<b style="color:var(--danger)">Voice input needs Chrome or Edge.</b> Read-aloud still works.';
+  if(!open)VA.stopListen();
+}
+function dictateTopics(){VA.startListen('topics');}
+function dictateChat(){VA.startListen('chat');}
+
+/* ─────────── UTILS ─────────── */
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function jsq(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');}
+function cap(s){return String(s||'').charAt(0).toUpperCase()+String(s||'').slice(1);}
+function slug(s){return String(s||'').replace(/[^a-z0-9]/gi,'_').toLowerCase();}
+function copyText(t){navigator.clipboard?.writeText(t).then(()=>toast('Copied to clipboard','ok')).catch(()=>toast('Copy failed','err'));}
+function toast(msg,type=''){
+  const w=document.getElementById('toast-wrap');const el=document.createElement('div');el.className='toast '+type;
+  el.innerHTML=`${type==='ok'?'✓ ':type==='err'?'✕ ':''}${esc(msg)}`;w.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2600);
+}
+function clearAllData(){
+  localStorage.removeItem('scholar_saved');localStorage.removeItem('scholar_history');
+  savedPapers=[];searchHistory=[];toast('All saved data cleared','ok');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.pcard-tools'))document.querySelectorAll('.cite-menu.open').forEach(m=>m.classList.remove('open'));
+});
+
+/* ─────────── INIT ─────────── */
+VA.init();
+document.getElementById('check-text').addEventListener('input',updateCharCount);
+showPage('home');
+</script>
+</body>
+</html>
