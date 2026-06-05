@@ -8,6 +8,8 @@
 [![OpenAlex](https://img.shields.io/badge/OpenAlex-250M+_papers-38BDF8)](https://openalex.org)
 [![License](https://img.shields.io/badge/License-MIT-34D399)](LICENSE)
 
+🔗 **[Live Demo →](https://hamzia-scholar-ai.hf.space)**
+
 ---
 
 ## 📸 Preview
